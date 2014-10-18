@@ -15,6 +15,7 @@
 #import "ContactsViewController.h"
 #import "SettingsViewController.h"
 #import "ApplyViewController.h"
+#import "HomeVC.h"
 
 //两次提示的默认间隔
 static const CGFloat kDefaultPlaySoundInterval = 3.0;
@@ -24,6 +25,7 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     ChatListViewController *_chatListVC;
     ContactsViewController *_contactsVC;
     SettingsViewController *_settingsVC;
+    HomeVC *_homeVC;
     
     UIBarButtonItem *_addFriendItem;
 }
@@ -85,12 +87,15 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
     if (item.tag == 0) {
-        self.title = @"会话";
+        self.title = @"首页";
         self.navigationItem.rightBarButtonItem = nil;
     }else if (item.tag == 1){
+        self.title = @"消息";
+        self.navigationItem.rightBarButtonItem = nil;
+    }else if (item.tag == 2){
         self.title = @"通讯录";
         self.navigationItem.rightBarButtonItem = _addFriendItem;
-    }else if (item.tag == 2){
+    }else if (item.tag == 3){
         self.title = @"设置";
         self.navigationItem.rightBarButtonItem = nil;
         [_settingsVC refreshConfig];
@@ -134,10 +139,19 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     self.tabBar.backgroundImage = [[UIImage imageNamed:@"tabbarBackground"] stretchableImageWithLeftCapWidth:25 topCapHeight:25];
     self.tabBar.selectionIndicatorImage = [[UIImage imageNamed:@"tabbarSelectBg"] stretchableImageWithLeftCapWidth:25 topCapHeight:25];
     
-    _chatListVC = [[ChatListViewController alloc] init];
-    _chatListVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"会话"
+    _homeVC = [[HomeVC alloc] init];
+    _homeVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"首页"
                                                            image:nil
                                                              tag:0];
+    [_homeVC.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"tabbar_chatsHL"]
+                         withFinishedUnselectedImage:[UIImage imageNamed:@"tabbar_chats"]];
+    [self unSelectedTapTabBarItems:_homeVC.tabBarItem];
+    [self selectedTapTabBarItems:_homeVC.tabBarItem];
+    
+    _chatListVC = [[ChatListViewController alloc] init];
+    _chatListVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"消息"
+                                                           image:nil
+                                                             tag:1];
     [_chatListVC.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"tabbar_chatsHL"]
                          withFinishedUnselectedImage:[UIImage imageNamed:@"tabbar_chats"]];
     [self unSelectedTapTabBarItems:_chatListVC.tabBarItem];
@@ -146,7 +160,7 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     _contactsVC = [[ContactsViewController alloc] initWithNibName:nil bundle:nil];
     _contactsVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"通讯录"
                                                            image:nil
-                                                             tag:1];
+                                                             tag:2];
     [_contactsVC.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"tabbar_contactsHL"]
                          withFinishedUnselectedImage:[UIImage imageNamed:@"tabbar_contacts"]];
     [self unSelectedTapTabBarItems:_contactsVC.tabBarItem];
@@ -155,15 +169,15 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     _settingsVC = [[SettingsViewController alloc] init];
     _settingsVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"设置"
                                                            image:nil
-                                                             tag:2];
+                                                             tag:3];
     [_settingsVC.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"tabbar_settingHL"]
                          withFinishedUnselectedImage:[UIImage imageNamed:@"tabbar_setting"]];
     _settingsVC.view.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     [self unSelectedTapTabBarItems:_settingsVC.tabBarItem];
     [self selectedTapTabBarItems:_settingsVC.tabBarItem];
     
-    self.viewControllers = @[_chatListVC, _contactsVC, _settingsVC];
-    [self selectedTapTabBarItems:_chatListVC.tabBarItem];
+    self.viewControllers = @[_homeVC, _chatListVC, _contactsVC, _settingsVC];
+    [self selectedTapTabBarItems:_homeVC.tabBarItem];
 }
 
 -(void)unSelectedTapTabBarItems:(UITabBarItem *)tabBarItem

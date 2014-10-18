@@ -16,6 +16,7 @@
 #import "ApplyViewController.h"
 #import "MobClick.h"
 #import <AVOSCloud/AVOSCloud.h>
+#import "AVSubclassesHelper.h"
 
 //AVOSCloud's app id and app key
 #define AVOSCloudAppID  @"ztxdtfdpjrzbsu3serlcvbdvyk0pfscj0uq4abwpnzzq0xjt"
@@ -58,7 +59,8 @@
     //设置AVOSCloud
     [AVOSCloud setApplicationId:AVOSCloudAppID
                       clientKey:AVOSCloudAppKey];
-    
+    //注册Subclasses
+    [AVSubclassesHelper RegisterSubclasses];
     
     //统计应用启动情况
     [AVAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
