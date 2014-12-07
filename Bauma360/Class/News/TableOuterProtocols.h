@@ -8,9 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "Article.h"
+#import "Resell.h"
 
 @protocol CustomTableCellDelegate <NSObject>
 @required;
 -(void)showArticle:(Article *)article;
 
+@end
+
+@protocol ResellOuterDelegate <NSObject>
+@required;
+-(void)showResell:(Resell *)resell;
+-(void)showCertificate:(Resell *)resell;
 @end

@@ -309,7 +309,7 @@
     BOOL isAutoLogin = [[[EaseMob sharedInstance] chatManager] isAutoLoginEnabled];
     BOOL loginSuccess = [notification.object boolValue];
     
-    if (isAutoLogin || loginSuccess) {
+    //if (isAutoLogin || loginSuccess) {
         [[ApplyViewController shareController] loadDataSourceFromLocalDB];
         if (_mainController == nil) {
             _mainController = [[MainViewController alloc] init];
@@ -317,12 +317,12 @@
         }else{
             nav  = _mainController.navigationController;
         }
-    }else{
+    /*}else{
         _mainController = nil;
         LoginViewController *loginController = [[LoginViewController alloc] init];
         nav = [[UINavigationController alloc] initWithRootViewController:loginController];
         loginController.title = @"Bauma360";
-    }
+    }*/
 
     if ([UIDevice currentDevice].systemVersion.floatValue < 7.0){
         nav.navigationBar.barStyle = UIBarStyleDefault;

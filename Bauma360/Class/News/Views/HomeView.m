@@ -7,7 +7,7 @@
 //
 
 #import "HomeView.h"
-#import "HomeViewCell.h"
+#import "NewsViewCell.h"
 
 
 #define MENUHEIHT 40

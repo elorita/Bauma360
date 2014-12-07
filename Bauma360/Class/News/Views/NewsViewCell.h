@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HomeViewCell : UITableViewCell
+@interface NewsViewCell : UITableViewCell
 
 @property (retain, nonatomic) IBOutlet UIImageView *headerImageView;
 @property (retain, nonatomic) IBOutlet UILabel *titleLabel;

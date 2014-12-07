@@ -57,6 +57,8 @@
     });
 }
 
+#pragma mark = UITableViewDelegate
+
 #pragma mark - UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if ([_delegate respondsToSelector:@selector(numberOfRowsInTableView:InSection:FromView:)]) {
@@ -124,11 +126,15 @@
 	//  put here just for demo
 	_reloading = YES;
     if ([_delegate respondsToSelector:@selector(refreshData: FromView:)]) {
-        [_delegate refreshData:^{
+        [_delegate refreshData:^(int aAddedRowCount) {
             [self doneLoadingTableViewData];
         } FromView:self];
     }else{
         [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:3.0];
+    }
+    
+    if ([_delegate respondsToSelector:@selector(loadHeaderView)] && (self.homeTableView.tableHeaderView == NULL)) {
+        self.homeTableView.tableHeaderView = [_delegate loadHeaderView];
     }
 }
 
@@ -180,16 +186,6 @@
 	
 	return [NSDate date]; // should return date data source was last changed
 	
-}
-
-#pragma mark SGFocusImageFrameDelegate
-- (void)foucusImageFrame:(SGFocusImageFrame *)imageFrame didSelectItem:(SGFocusImageItem *)item
-{
-    NSLog(@"%s \n click===>%@",__FUNCTION__,item.title);
-}
-- (void)foucusImageFrame:(SGFocusImageFrame *)imageFrame currentItem:(int)index;
-{
-    //    NSLog(@"%s \n scrollToIndex===>%d",__FUNCTION__,index);
 }
 
 @end

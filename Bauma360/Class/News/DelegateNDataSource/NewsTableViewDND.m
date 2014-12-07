@@ -7,17 +7,16 @@
 //
 
 #import "NewsTableViewDND.h"
-#import "HomeViewCell.h"
+#import "NewsViewCell.h"
 #import <AVOSCloud/AVOSCloud.h>
 #import "Article.h"
-#import "RSArticle.h"
-#import "RSReadingBoard.h"
 
-#define COUNT_PER_LOADING 4
+#define COUNT_PER_LOADING 20
 
 @implementation NewsTableViewDND
 {
     NSInteger articleLoadedCount;
+    SGFocusImageFrame *_bannerView;
 }
 
 #pragma mark 改变TableView上面滚动栏的内容
@@ -56,8 +55,7 @@
         [itemArray addObject:item];
     }
     
-    SGFocusImageFrame *vFocusFrame = (SGFocusImageFrame *)aTableContent.homeTableView.tableHeaderView;
-    [vFocusFrame changeImageViewsContent:itemArray];
+    [_bannerView changeImageViewsContent:itemArray];
 }
 
 #pragma mark - CustomTableViewDataSource
@@ -66,10 +64,10 @@
 }
 
 -(UITableViewCell *)cellForRowInTableView:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView{
-    static NSString *vCellIdentify = @"homeCell";
-    HomeViewCell *vCell = [aTableView dequeueReusableCellWithIdentifier:vCellIdentify];
+    static NSString *vCellIdentify = @"newsCell";
+    NewsViewCell *vCell = [aTableView dequeueReusableCellWithIdentifier:vCellIdentify];
     if (vCell == nil) {
-        vCell = [[[NSBundle mainBundle] loadNibNamed:@"HomeViewCell" owner:self options:nil] lastObject];
+        vCell = [[[NSBundle mainBundle] loadNibNamed:@"NewsViewCell" owner:self options:nil] lastObject];
     }
     
     Article *article = (Article *)[aView.tableInfoArray objectAtIndex: aIndexPath.row];
@@ -81,8 +79,12 @@
 }
 
 #pragma mark CustomTableViewDelegate
+-(UIView *)loadHeaderView{
+    return _bannerView;
+}
+
 -(float)heightForRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView{
-    HomeViewCell *vCell = [[[NSBundle mainBundle] loadNibNamed:@"HomeViewCell" owner:self options:nil] lastObject];
+    NewsViewCell *vCell = [[[NSBundle mainBundle] loadNibNamed:@"NewsViewCell" owner:self options:nil] lastObject];
     return vCell.frame.size.height;
 }
 
@@ -114,7 +116,13 @@
     }];
 }
 
--(void)refreshData:(void(^)())complete FromView:(CustomTableView *)aView{
+-(void)refreshData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView{
+    if (_bannerView == NULL)//初次刷新数据时，初始化UITableView.tableHeaderView
+    {
+        SGFocusImageItem *item = [[SGFocusImageItem alloc] initWithDict:@{@"image": [NSString stringWithFormat:@"ad%d",1]} tag:-1];
+        _bannerView = [[SGFocusImageFrame alloc] initWithFrame:CGRectMake(0, -105, 320, 185) delegate:self imageItems:@[item] isAuto:YES];
+    }
+    
     AVQuery *query = [Article query];
     [query whereKey:@"tag" containsAllObjectsInArray:@[@"news"]];
     [query orderByAscending:@"date"];
@@ -129,7 +137,7 @@
         }
         [self changeHeaderContentWithCustomTable:aView];
         if (complete) {
-            complete();
+            complete(objects.count);
         }
     }];
 }
@@ -138,4 +146,13 @@
     return  aView.reloading;
 }
 
+#pragma mark SGFocusImageFrameDelegate
+- (void)foucusImageFrame:(SGFocusImageFrame *)imageFrame didSelectItem:(SGFocusImageItem *)item
+{
+    NSLog(@"%s \n click===>%@",__FUNCTION__,item.title);
+}
+- (void)foucusImageFrame:(SGFocusImageFrame *)imageFrame currentItem:(int)index;
+{
+    //    NSLog(@"%s \n scrollToIndex===>%d",__FUNCTION__,index);
+}
 @end

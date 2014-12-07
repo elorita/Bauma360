@@ -7,9 +7,16 @@
 //
 
 #import "ScrollPageView.h"
-#import "HomeViewCell.h"
+#import "NewsViewCell.h"
+#import "NewsTableViewDND.h"
+#import "ResellViewCell.h"
+#import "ResellTableViewDND.h"
 
 @implementation ScrollPageView
+{
+    NewsTableViewDND *newsDND;
+    ResellTableViewDND *resellDND;
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -51,8 +58,12 @@
             newsDND.delegate = self.homeViewController;
             vCustomTableView.delegate = newsDND;
             vCustomTableView.dataSource = newsDND;
-        }
-        else
+        }else if (i == 2){
+            resellDND = [[ResellTableViewDND alloc] init];
+            resellDND.delegate = self.homeViewController;
+            vCustomTableView.delegate = resellDND;
+            vCustomTableView.dataSource = resellDND;
+        }else
         {
             vCustomTableView.delegate = self;
             vCustomTableView.dataSource = self;
@@ -89,9 +100,9 @@
 #pragma mark 添加HeaderView
 -(void)addLoopScrollowView:(CustomTableView *)aTableView {
     //添加一张默认图片
-    SGFocusImageItem *item = [[SGFocusImageItem alloc] initWithDict:@{@"image": [NSString stringWithFormat:@"ad%d",1]} tag:-1];
-    SGFocusImageFrame *bannerView = [[SGFocusImageFrame alloc] initWithFrame:CGRectMake(0, -105, 320, 185) delegate:aTableView imageItems:@[item] isAuto:YES];
-    aTableView.homeTableView.tableHeaderView = bannerView;
+//    SGFocusImageItem *item = [[SGFocusImageItem alloc] initWithDict:@{@"image": [NSString stringWithFormat:@"ad%d",1]} tag:-1];
+//    SGFocusImageFrame *bannerView = [[SGFocusImageFrame alloc] initWithFrame:CGRectMake(0, -105, 320, 185) delegate:aTableView imageItems:@[item] isAuto:YES];
+//    aTableView.homeTableView.tableHeaderView = bannerView;
 }
 
 #pragma mark 改变TableView上面滚动栏的内容

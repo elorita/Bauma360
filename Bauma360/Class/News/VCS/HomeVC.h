@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TableCellProtocols.h"
+#import "TableOuterProtocols.h"
+#import "PPImageScrollingCellView.h"
 
-@interface HomeVC : UIViewController<CustomTableCellDelegate>
+@interface HomeVC : UIViewController<CustomTableCellDelegate,ResellOuterDelegate,PPImageScrollingViewDelegate>
 
 -(void)showArticle:(Article *)article;
 

@@ -1,14 +1,13 @@
 //
 //  ScrollPageView.h
-//  ShowProduct
+//  所有的资讯、商家、二手等信息，都分别以独立的TableView包含在ScrollPageView中
 //
-//  Created by lin on 14-5-23.
-//  Copyright (c) 2014年 @"". All rights reserved.
+//  Created by lin on 14-9-23.
+//  Copyright (c) 2014年 @"思木科技". All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #import "CustomTableView.h"
-#import "NewsTableViewDND.h"
 
 @protocol ScrollPageViewDelegate <NSObject>
 -(void)didScrollPageViewChangedPage:(NSInteger)aPage;
@@ -18,7 +17,6 @@
 {
     NSInteger mCurrentPage;
     BOOL mNeedUseDelegate;
-    NewsTableViewDND *newsDND;
 }
 @property(nonatomic,retain) UIViewController *homeViewController;
 

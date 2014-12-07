@@ -17,8 +17,9 @@
 -(float)heightForRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView;
 -(void)didSelectedRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView;
 -(void)loadData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView;
--(void)refreshData:(void(^)())complete FromView:(CustomTableView *)aView;
+-(void)refreshData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView;
 @optional
+-(UIView *)loadHeaderView;
 //- (void)tableViewWillBeginDragging:(UIScrollView *)scrollView;
 //- (void)tableViewDidScroll:(UIScrollView *)scrollView;
 ////- (void)tableViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;
@@ -32,7 +33,7 @@
 
 @end
 
-@interface CustomTableView : UIView<UITableViewDataSource,UITableViewDelegate,EGORefreshTableHeaderDelegate,SGFocusImageFrameDelegate>
+@interface CustomTableView : UIView<UITableViewDataSource,UITableViewDelegate,EGORefreshTableHeaderDelegate>
 {
     EGORefreshTableHeaderView *_refreshHeaderView;
     NSInteger     mRowCount;

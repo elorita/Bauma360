@@ -12,7 +12,9 @@
 #import "Article.h"
 #import "RSArticle.h"
 #import "RSReadingBoard.h"
-#import "AddFriendViewController.h";
+#import "AddFriendViewController.h"
+#import "SimuCertifiedViewController.h"
+#import "ImgShowViewController.h"
 
 @interface HomeVC ()
 {
@@ -114,6 +116,24 @@
     board.article = rsArticle;
 
     [self.navigationController pushViewController:board animated:YES];
+}
+
+#pragma ResellOuterDelegate
+
+-(void)showResell:(Resell *)resell{
+}
+
+-(void)showCertificate:(Resell *)resell{
+    SimuCertifiedViewController *controller = [[SimuCertifiedViewController alloc] init];
+    [self.navigationController pushViewController:controller animated:YES];
+}
+
+#pragma
+- (void)collectionView:(PPImageScrollingCellView *)collectionView didSelectImageItemAtIndexPath:(NSIndexPath*)indexPath onImages:(NSArray *)images{
+    ImgShowViewController *imgShow = [[ImgShowViewController alloc] initWithSourceData:images withIndex:indexPath.row];
+    //[self.navigationController presentViewController:imgShow animated:YES completion:nil];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:imgShow];
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 

@@ -6,9 +6,9 @@
 //  Copyright (c) 2014年 @"". All rights reserved.
 //
 
-#import "HomeViewCell.h"
+#import "NewsViewCell.h"
 
-@implementation HomeViewCell
+@implementation NewsViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

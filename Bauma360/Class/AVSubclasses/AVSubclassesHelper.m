@@ -8,11 +8,14 @@
 
 #import "AVSubclassesHelper.h"
 #import "Article.h"
+#import "Resell.h"
 
 @implementation AVSubclassesHelper
 
 +(void) RegisterSubclasses {
     [Article registerSubclass];
+    [Resell registerSubclass];
+    [ResellImage registerSubclass];
 }
 
 @end

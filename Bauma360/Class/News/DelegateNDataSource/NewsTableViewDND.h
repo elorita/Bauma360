@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "CustomTableView.h"
-#import "TableCellProtocols.h"
+#import "TableOuterProtocols.h"
 
-@interface NewsTableViewDND : NSObject<CustomTableViewDataSource,CustomTableViewDelegate>
+@interface NewsTableViewDND : NSObject<CustomTableViewDataSource,CustomTableViewDelegate,SGFocusImageFrameDelegate>
 
 @property (nonatomic,assign) id<CustomTableCellDelegate>  delegate;
 
