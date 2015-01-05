@@ -9,6 +9,11 @@
 #import "AVSubclassesHelper.h"
 #import "Article.h"
 #import "Resell.h"
+#import "RFID.h"
+#import "Product.h"
+#import "ProductCategory.h"
+#import "Customer.h"
+#import "Vendor.h"
 
 @implementation AVSubclassesHelper
 
@@ -16,6 +21,11 @@
     [Article registerSubclass];
     [Resell registerSubclass];
     [ResellImage registerSubclass];
+    [RFID registerSubclass];
+    [Product registerSubclass];
+    [Customer registerSubclass];
+    [Vendor registerSubclass];
+    [ProductCategory registerSubclass];
 }
 
 @end

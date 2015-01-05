@@ -18,6 +18,8 @@
 @property(nonatomic) NSInteger *price;
 @property(nonatomic,retain) AVRelation *images;
 @property(nonatomic) BOOL certified;
+@property(nonatomic,retain) AVGeoPoint *location;
+@property(nonatomic,retain) AVUser *owner;
 @property(nonatomic,retain) AVObject *certifiedInfo;
 
 @end

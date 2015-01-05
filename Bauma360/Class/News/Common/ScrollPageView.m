@@ -54,15 +54,15 @@
         CustomTableView *vCustomTableView = [[CustomTableView alloc] initWithFrame:CGRectMake(320 * i, 0, 320, self.frame.size.height)];
         if (i == 0)
         {
-            newsDND = [[NewsTableViewDND alloc] init];
-            newsDND.delegate = self.homeViewController;
-            vCustomTableView.delegate = newsDND;
-            vCustomTableView.dataSource = newsDND;
-        }else if (i == 2){
             resellDND = [[ResellTableViewDND alloc] init];
             resellDND.delegate = self.homeViewController;
             vCustomTableView.delegate = resellDND;
             vCustomTableView.dataSource = resellDND;
+        }else if (i == 1){
+            newsDND = [[NewsTableViewDND alloc] init];
+            newsDND.delegate = self.homeViewController;
+            vCustomTableView.delegate = newsDND;
+            vCustomTableView.dataSource = newsDND;
         }else
         {
             vCustomTableView.delegate = self;

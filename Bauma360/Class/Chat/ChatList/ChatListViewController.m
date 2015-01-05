@@ -20,6 +20,8 @@
 #import "EMSearchDisplayController.h"
 #import "ConvertToCommonEmoticonsHelper.h"
 
+#import <AVOSCloud/AVOSCloud.h>
+
 @interface ChatListViewController ()<UITableViewDelegate,UITableViewDataSource, UISearchDisplayDelegate,SRRefreshDelegate, UISearchBarDelegate, IChatManagerDelegate>
 
 @property (strong, nonatomic) NSMutableArray        *dataSource;
@@ -485,5 +487,11 @@
     NSLog(@"离线消息接收成功");
     [self refreshDataSource];
 }
+
+//- (NSString *) nicknameWithChatter: (NSString *) chatter {
+//    AVQuery *query = [AVUser query];
+//    [query whereKey:@"username" equalTo:chatter];
+//    [query find]
+//}
 
 @end

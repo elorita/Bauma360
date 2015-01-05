@@ -13,6 +13,16 @@
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
 
+//@protocol LoginViewDelegate <NSObject>
+//
+//@required
+//
+//- (void)onLoginSuccess;
+//
+//@end
+
 @interface LoginViewController : BaseViewController
+
+//@property (nonatomic, retain) id<LoginViewDelegate> delegate;
 
 @end

@@ -25,5 +25,5 @@
     #import "CoreData+MagicalRecord.h"
 
     #import "EaseMob.h"
-
+#define IOS7 [[[UIDevice currentDevice] systemVersion]floatValue]>=7
 #endif

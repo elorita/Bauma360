@@ -32,6 +32,7 @@
     
     Resell *resell = (Resell *)[aView.tableInfoArray objectAtIndex: aIndexPath.row];
     [vCell setResell:resell showGalleryDelegate:_delegate];
+    [vCell initialize];
     
     return vCell;
 }
@@ -96,6 +97,12 @@
 -(void)showSimuCertificate:(Resell *) resell{
     if ([_delegate respondsToSelector:@selector(showCertificate:)]) {
         [_delegate showCertificate: resell];
+    }
+}
+
+-(void)callOwner:(AVUser *)owner{
+    if ([_delegate respondsToSelector:@selector(callOwner:)]) {
+        [_delegate callOwner: owner];
     }
 }
 

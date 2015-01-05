@@ -20,4 +20,5 @@
 @required;
 -(void)showResell:(Resell *)resell;
 -(void)showCertificate:(Resell *)resell;
+-(void)callOwner:(AVUser *)owner;
 @end

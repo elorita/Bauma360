@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "Resell.h"
+#import <AVOSCloud/AVOSCloud.h>
 
 @protocol ResellViewCellDelegate <NSObject>
 @required;
 -(void)showSimuCertificate:(Resell *) resell;
-
+-(void)callOwner:(AVUser *)owner;
 @end
 
 @interface ResellViewCell : UITableViewCell
@@ -24,9 +25,15 @@
 
 @property (retain, nonatomic) IBOutlet UIView *imageScrollContentView;
 
+@property (retain, nonatomic) IBOutlet UIButton *btnCollection;
+@property (retain, nonatomic) IBOutlet UIButton *btnChat;
+@property (retain, nonatomic) IBOutlet UIButton *btnShare;
 @property (nonatomic, assign) id<ResellViewCellDelegate> delegate;
 
 -(IBAction)simuCertifiedClick:(id)sender;
 
+-(IBAction)callClick:(id)sender;
+
+- (void)initialize;
 - (void) setResell:(Resell *) value showGalleryDelegate:(id)delegate;
 @end

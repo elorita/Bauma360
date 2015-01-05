@@ -15,7 +15,7 @@
 
 @implementation NewsTableViewDND
 {
-    NSInteger articleLoadedCount;
+    NSInteger _loadedCount;
     SGFocusImageFrame *_bannerView;
 }
 
@@ -95,25 +95,39 @@
     }
 }
 
--(void)loadData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView{
+//从AVCloud查询数据并刷新界面
+- (void)QueryFromAVCloudAndFillView:(CustomTableView *)aView afterClearAll:(BOOL)isAfterClearAll withComplete:(void(^)())complete{
     AVQuery *query = [Article query];
     [query whereKey:@"tag" containsAllObjectsInArray:@[@"news"]];
     [query orderByAscending:@"date"];
     query.limit = COUNT_PER_LOADING;
-    query.skip = self->articleLoadedCount;
+    query.cachePolicy = kPFCachePolicyNetworkElseCache;
+    query.maxCacheAge = 3600*24*7;//缓存一周时间
+    if (!isAfterClearAll)
+        query.skip = self->_loadedCount;
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error)
         {
+            if (isAfterClearAll){
+                self->_loadedCount = objects.count;
+                [aView.tableInfoArray removeAllObjects];
+            }else{
+                self->_loadedCount += objects.count;
+            }
+            
             for (Article *article in objects) {
                 [aView.tableInfoArray addObject:article];
             }
-            self->articleLoadedCount += objects.count;
             
             if (complete) {
                 complete(objects.count);
             }
         }
     }];
+}
+
+-(void)loadData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView{
+    [self QueryFromAVCloudAndFillView:aView afterClearAll:false withComplete:complete];
 }
 
 -(void)refreshData:(void(^)(int aAddedRowCount))complete FromView:(CustomTableView *)aView{
@@ -123,23 +137,8 @@
         _bannerView = [[SGFocusImageFrame alloc] initWithFrame:CGRectMake(0, -105, 320, 185) delegate:self imageItems:@[item] isAuto:YES];
     }
     
-    AVQuery *query = [Article query];
-    [query whereKey:@"tag" containsAllObjectsInArray:@[@"news"]];
-    [query orderByAscending:@"date"];
-    query.limit = COUNT_PER_LOADING;
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
-            [aView.tableInfoArray removeAllObjects];
-            for (Article *article in objects) {
-                [aView.tableInfoArray addObject:article];
-            }
-            self->articleLoadedCount = objects.count;
-        }
-        [self changeHeaderContentWithCustomTable:aView];
-        if (complete) {
-            complete(objects.count);
-        }
-    }];
+    [self QueryFromAVCloudAndFillView:aView afterClearAll:true withComplete:complete];
+    [self changeHeaderContentWithCustomTable:aView];
 }
 
 - (BOOL)tableViewEgoRefreshTableHeaderDataSourceIsLoading:(EGORefreshTableHeaderView*)view FromView:(CustomTableView *)aView{

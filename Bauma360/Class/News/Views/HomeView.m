@@ -36,26 +36,26 @@
 
 #pragma mark UI初始化
 -(void)commInit{
-    NSArray *vButtonItemArray = @[@{NOMALKEY: @"normal.png",
-                                    HEIGHTKEY:@"helight.png",
-                                    TITLEKEY:@"资讯",
-                                    TITLEWIDTH:[NSNumber numberWithFloat:80]
+    NSArray *vButtonItemArray = @[@{NOMALKEY: @"normal",
+                                    HEIGHTKEY:@"helight",
+                                    TITLEKEY:@"二手",
+                                    TITLEWIDTH:[NSNumber numberWithFloat:160]
                                     },
                                   @{NOMALKEY: @"normal.png",
                                     HEIGHTKEY:@"helight.png",
-                                    TITLEKEY:@"商家",
-                                    TITLEWIDTH:[NSNumber numberWithFloat:80]
+                                    TITLEKEY:@"资讯",
+                                    TITLEWIDTH:[NSNumber numberWithFloat:160]
                                     },
-                                  @{NOMALKEY: @"normal",
-                                    HEIGHTKEY:@"helight",
-                                    TITLEKEY:@"二手",
-                                    TITLEWIDTH:[NSNumber numberWithFloat:80]
-                                    },
-                                  @{NOMALKEY: @"normal",
-                                    HEIGHTKEY:@"helight",
-                                    TITLEKEY:@"圈子",
-                                    TITLEWIDTH:[NSNumber numberWithFloat:80]
-                                    },
+//                                  @{NOMALKEY: @"normal.png",
+//                                    HEIGHTKEY:@"helight.png",
+//                                    TITLEKEY:@"商家",
+//                                    TITLEWIDTH:[NSNumber numberWithFloat:80]
+//                                    },
+//                                  @{NOMALKEY: @"normal",
+//                                    HEIGHTKEY:@"helight",
+//                                    TITLEKEY:@"圈子",
+//                                    TITLEWIDTH:[NSNumber numberWithFloat:80]
+//                                    },
                                   ];
     
     if (mMenuHriZontal == nil) {

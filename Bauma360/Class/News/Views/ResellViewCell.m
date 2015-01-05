@@ -11,6 +11,7 @@
 
 #define kScrollingViewHieght 72
 #define kStartPointY 0
+#define kButtonIconWidthNHeight 10
 
 @implementation ResellViewCell
 {
@@ -18,7 +19,7 @@
     PPImageScrollingCellView *_imageScrollingView;
 }
 
-@synthesize titleLabel, summaryLabel, priceLabel, effectiveLabel;
+@synthesize titleLabel, summaryLabel, priceLabel, effectiveLabel, btnChat, btnCollection, btnShare;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -26,7 +27,7 @@
     if (self) {
         // Initialization code
         
-        [self initialize];
+        //[self initialize];
     }
     return self;
 }
@@ -34,11 +35,27 @@
 - (void)awakeFromNib {
     // Initialization code
     [super awakeFromNib];
-    [self initialize];
+    //[self initialize];
 }
 
 - (void)initialize{
     _imageScrollingView = [[PPImageScrollingCellView alloc] initWithFrame:CGRectMake(0, kStartPointY, 320, kScrollingViewHieght)];
+    [self setButtonsIcon];
+}
+
+- (void)setButtonsIcon {
+    UIImage *collectionIamge = [UIImage imageNamed:@"star_line.png"];
+    //btnCollection.imageView.frame = CGRectMake(0, (btnCollection.frame.size.height - kButtonIconWidthNHeight) / 2, kButtonIconWidthNHeight, kButtonIconWidthNHeight);
+    btnCollection.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [btnCollection setImage:collectionIamge forState:UIControlStateNormal];
+    
+    UIImage *shareImage = [UIImage imageNamed:@"share.png"];
+    btnShare.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [btnShare setImage:shareImage forState:UIControlStateNormal];
+    
+    UIImage *chatImage = [UIImage imageNamed:@"chat.png"];
+    btnChat.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [btnChat setImage:chatImage forState:UIControlStateNormal];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -83,6 +100,16 @@
 -(IBAction)simuCertifiedClick:(id)sender{
     if ([_delegate respondsToSelector:@selector(showSimuCertificate:)]) {
         [_delegate showSimuCertificate: _myResell];
+    }
+}
+
+-(IBAction)callClick:(id)sender
+{
+    if ([_delegate respondsToSelector:@selector(callOwner:)]) {
+        [_myResell.owner fetchIfNeededInBackgroundWithBlock:^(AVObject *object, NSError *error) {
+            AVUser *user = (AVUser *)object;
+            [self->_delegate callOwner: user];
+        }];
     }
 }
 

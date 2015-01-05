@@ -28,6 +28,7 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     HomeVC *_homeVC;
     
     UIBarButtonItem *_addFriendItem;
+    UIBarButtonItem *_scanQRCodeItem;
 }
 
 @property (strong, nonatomic)NSDate *lastPlaySoundDate;
@@ -52,7 +53,6 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     if ([UIDevice currentDevice].systemVersion.floatValue >= 7) {
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
-    self.title = @"首页";
     
     //获取未读消息数，此时并没有把self注册为SDK的delegate，读取出的未读数是上次退出程序时的
     [self didUnreadMessagesCountChanged];
@@ -64,12 +64,20 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     self.selectedIndex = 0;
     
     UIButton *addButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
-    [addButton setImage:[UIImage imageNamed:@"add.png"] forState:UIControlStateNormal];
+    [addButton setImage:[UIImage imageNamed:@"user-add.png"] forState:UIControlStateNormal];
     [addButton addTarget:_contactsVC action:@selector(addFriendAction) forControlEvents:UIControlEventTouchUpInside];
     _addFriendItem = [[UIBarButtonItem alloc] initWithCustomView:addButton];
     
+    UIButton *scanQRButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    [scanQRButton setImage:[UIImage imageNamed:@"QRCode1.png"] forState:UIControlStateNormal];
+    [scanQRButton addTarget:_homeVC action:@selector(setupCamera) forControlEvents:UIControlEventTouchUpInside];
+    _scanQRCodeItem = [[UIBarButtonItem alloc] initWithCustomView:scanQRButton];
+    
     [self setupUnreadMessageCount];
     [self setupUntreatedApplyCount];
+    
+    self.title = @"有商机";
+    self.navigationItem.leftBarButtonItem = _scanQRCodeItem;
 }
 
 - (void)didReceiveMemoryWarning
@@ -87,17 +95,21 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
     if (item.tag == 0) {
-        self.title = @"首页";
+        self.title = @"有商机";
         self.navigationItem.rightBarButtonItem = nil;
+        self.navigationItem.leftBarButtonItem = _scanQRCodeItem;
     }else if (item.tag == 1){
-        self.title = @"消息";
+        self.title = @"聊一下";
         self.navigationItem.rightBarButtonItem = nil;
+        self.navigationItem.leftBarButtonItem = nil;
     }else if (item.tag == 2){
         self.title = @"通讯录";
         self.navigationItem.rightBarButtonItem = _addFriendItem;
+        self.navigationItem.leftBarButtonItem = nil;
     }else if (item.tag == 3){
         self.title = @"设置";
         self.navigationItem.rightBarButtonItem = nil;
+        self.navigationItem.leftBarButtonItem = nil;
         [_settingsVC refreshConfig];
     }
 }
@@ -123,56 +135,33 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
 
 #pragma mark - private
 
--(void)registerNotifications
-{
-    [self unregisterNotifications];
-    [[EaseMob sharedInstance].chatManager addDelegate:self delegateQueue:nil];
-}
-
--(void)unregisterNotifications
-{
-    [[EaseMob sharedInstance].chatManager removeDelegate:self];
-}
-
 - (void)setupSubviews
 {
     self.tabBar.backgroundImage = [[UIImage imageNamed:@"tabbarBackground"] stretchableImageWithLeftCapWidth:25 topCapHeight:25];
     self.tabBar.selectionIndicatorImage = [[UIImage imageNamed:@"tabbarSelectBg"] stretchableImageWithLeftCapWidth:25 topCapHeight:25];
     
     _homeVC = [[HomeVC alloc] init];
-    _homeVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"首页"
-                                                           image:nil
-                                                             tag:0];
-    [_homeVC.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"tabbar_chatsHL"]
-                         withFinishedUnselectedImage:[UIImage imageNamed:@"tabbar_chats"]];
+    _homeVC.tabBarItem = [_homeVC.tabBarItem initWithTitle:@"有商机" image:[UIImage imageNamed:@"tabbar_glasses"] selectedImage:[UIImage imageNamed:@"tabbar_glassesHL"]];
+    _homeVC.tabBarItem.tag = 0;
     [self unSelectedTapTabBarItems:_homeVC.tabBarItem];
     [self selectedTapTabBarItems:_homeVC.tabBarItem];
     
     _chatListVC = [[ChatListViewController alloc] init];
-    _chatListVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"消息"
-                                                           image:nil
-                                                             tag:1];
-    [_chatListVC.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"tabbar_chatsHL"]
-                         withFinishedUnselectedImage:[UIImage imageNamed:@"tabbar_chats"]];
+    _chatListVC.tabBarItem = [_chatListVC.tabBarItem initWithTitle:@"聊一下" image:[UIImage imageNamed:@"tabbar_chat"] selectedImage:[UIImage imageNamed:@"tabbar_chatHL"]];
+    _chatListVC.tabBarItem.tag = 1;
     [self unSelectedTapTabBarItems:_chatListVC.tabBarItem];
     [self selectedTapTabBarItems:_chatListVC.tabBarItem];
     
     _contactsVC = [[ContactsViewController alloc] initWithNibName:nil bundle:nil];
-    _contactsVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"通讯录"
-                                                           image:nil
-                                                             tag:2];
-    [_contactsVC.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"tabbar_contactsHL"]
-                         withFinishedUnselectedImage:[UIImage imageNamed:@"tabbar_contacts"]];
+    _contactsVC.tabBarItem = [_contactsVC.tabBarItem initWithTitle:@"通讯录" image:[UIImage imageNamed:@"tabbar_user"] selectedImage:[UIImage imageNamed:@"tabbar_userHL"]];
+    _contactsVC.tabBarItem.tag = 2;
     [self unSelectedTapTabBarItems:_contactsVC.tabBarItem];
     [self selectedTapTabBarItems:_contactsVC.tabBarItem];
     
     _settingsVC = [[SettingsViewController alloc] init];
-    _settingsVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"设置"
-                                                           image:nil
-                                                             tag:3];
-    [_settingsVC.tabBarItem setFinishedSelectedImage:[UIImage imageNamed:@"tabbar_settingHL"]
-                         withFinishedUnselectedImage:[UIImage imageNamed:@"tabbar_setting"]];
+    _settingsVC.tabBarItem = [_settingsVC.tabBarItem initWithTitle:@"设置" image:[UIImage imageNamed:@"tabbar_config"] selectedImage:[UIImage imageNamed:@"tabbar_configHL"]];
     _settingsVC.view.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+    _settingsVC.tabBarItem.tag = 3;
     [self unSelectedTapTabBarItems:_settingsVC.tabBarItem];
     [self selectedTapTabBarItems:_settingsVC.tabBarItem];
     
@@ -183,7 +172,7 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
 -(void)unSelectedTapTabBarItems:(UITabBarItem *)tabBarItem
 {
     [tabBarItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                        [UIFont systemFontOfSize:14], UITextAttributeFont,[UIColor whiteColor],UITextAttributeTextColor,
+                                        [UIFont systemFontOfSize:14], NSFontAttributeName,[UIColor whiteColor],NSForegroundColorAttributeName,
                                         nil] forState:UIControlStateNormal];
 }
 
@@ -191,8 +180,20 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
 {
     [tabBarItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                         [UIFont systemFontOfSize:14],
-                                        UITextAttributeFont,[UIColor colorWithRed:0.393 green:0.553 blue:1.000 alpha:1.000],UITextAttributeTextColor,
+                                        NSFontAttributeName,[UIColor colorWithRed:0.393 green:0.553 blue:1.000 alpha:1.000],NSForegroundColorAttributeName,
                                         nil] forState:UIControlStateSelected];
+}
+
+#pragma EaseMob delegate
+-(void)registerNotifications
+{
+    [self unregisterNotifications];
+    [[EaseMob sharedInstance].chatManager addDelegate:self delegateQueue:nil];
+}
+
+-(void)unregisterNotifications
+{
+    [[EaseMob sharedInstance].chatManager removeDelegate:self];
 }
 
 // 统计未读消息数

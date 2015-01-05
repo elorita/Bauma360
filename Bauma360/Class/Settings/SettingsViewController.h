@@ -11,8 +11,9 @@
   */
 
 #import <UIKit/UIKit.h>
+#import "ShowUserViewCell.h"
 
-@interface SettingsViewController : UITableViewController
+@interface SettingsViewController : UITableViewController 
 
 - (void)refreshConfig;
 
