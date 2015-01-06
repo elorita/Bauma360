@@ -22,19 +22,44 @@
 #define AVOSCloudAppID  @"ztxdtfdpjrzbsu3serlcvbdvyk0pfscj0uq4abwpnzzq0xjt"
 #define AVOSCloudAppKey @"3b42n9qeca6zh58r1fcd91rbblfgz24ro4boz502rl7ldms2"
 
-@implementation AppDelegate
+@implementation AppDelegate {
+    UIImageView *zView;//Z图片ImageView
+    UIImageView *fView;//F图片ImageView
+    
+    
+    UIView *rView;//图片的UIView
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
+    
+    [self loginStateChange:nil];
+    [self.window makeKeyAndVisible];
+    
+    fView =[[UIImageView alloc]initWithFrame:self.window.frame];//初始化fView
+    fView.image=[UIImage imageNamed:@"f.jpg"];//图片f.png 到fView
+    
+    zView=[[UIImageView alloc]initWithFrame:self.window.frame];//初始化zView
+    zView.image=[UIImage imageNamed:@"z.jpg"];//图片z.png 到zView
+    
+    rView=[[UIView alloc]initWithFrame:self.window.frame];//初始化rView
+    
+    [rView addSubview:fView];//add 到rView
+    [rView addSubview:zView];//add 到rView
+    
+    [self.window addSubview:rView];//add 到window
+    
+    [self performSelector:@selector(TheAnimation) withObject:nil afterDelay:1];//5秒后执行TheAnimation
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(loginStateChange:)
                                                  name:KNOTIFICATION_LOGINCHANGE
                                                object:nil];
     
     if ([UIDevice currentDevice].systemVersion.floatValue >= 7.0) {
-        [[UINavigationBar appearance] setBarTintColor:RGBACOLOR(78, 188, 211, 1)];
+        [[UINavigationBar appearance] setBarTintColor:[UIColor orangeColor]];
         [[UINavigationBar appearance] setTitleTextAttributes:
          [NSDictionary dictionaryWithObjectsAndKeys:RGBACOLOR(245, 245, 245, 1), NSForegroundColorAttributeName, [UIFont fontWithName:@ "HelveticaNeue-CondensedBlack" size:21.0], NSFontAttributeName, nil]];
     }
@@ -54,7 +79,6 @@
     UIRemoteNotificationTypeAlert;
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
 #endif
-    
 //AVOSCloud SDK调用
     //设置AVOSCloud
     [AVOSCloud setApplicationId:AVOSCloudAppID
@@ -90,10 +114,48 @@
     //demo coredata, .pch中有相关头文件引用
     [MagicalRecord setupCoreDataStackWithStoreNamed:[NSString stringWithFormat:@"%@.sqlite", @"UIDemo"]];
     
-    [self loginStateChange:nil];
-    [self.window makeKeyAndVisible];
+
+    
     return YES;
 }
+
+- (void)TheAnimation{
+    
+    CATransition *animation = [CATransition animation];
+    animation.delegate = self;
+    animation.duration = 0.7 ;  // 动画持续时间(秒)
+    animation.timingFunction = UIViewAnimationCurveEaseInOut;
+    animation.type = kCATransitionFade;//淡入淡出效果
+    
+    NSUInteger f = [[rView subviews] indexOfObject:fView];
+    NSUInteger z = [[rView subviews] indexOfObject:zView];
+    [rView exchangeSubviewAtIndex:z withSubviewAtIndex:f];
+    
+    [[rView layer] addAnimation:animation forKey:@"animation"];
+    
+    [self performSelector:@selector(ToUpSide) withObject:nil afterDelay:2];//2秒后执行TheAnimation
+}
+
+#pragma mark - 上升效果
+- (void)ToUpSide {
+    
+    [self moveToUpSide];//向上拉界面
+    
+}
+
+- (void)moveToUpSide {
+    [UIView animateWithDuration:0.7 //速度0.7秒
+                     animations:^{//修改rView坐标
+                         rView.frame = CGRectMake(self.window.frame.origin.x,
+                                                  -self.window.frame.size.height,
+                                                  self.window.frame.size.width,
+                                                  self.window.frame.size.height);
+                     }
+                     completion:^(BOOL finished){
+                     }];
+    
+}
+
 
 -(void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
@@ -306,28 +368,20 @@
 {
     UINavigationController *nav = nil;
 
-    BOOL isAutoLogin = [[[EaseMob sharedInstance] chatManager] isAutoLoginEnabled];
-    BOOL loginSuccess = [notification.object boolValue];
-    
-    //if (isAutoLogin || loginSuccess) {
-        [[ApplyViewController shareController] loadDataSourceFromLocalDB];
-        if (_mainController == nil) {
-            _mainController = [[MainViewController alloc] init];
-            nav = [[UINavigationController alloc] initWithRootViewController:_mainController];
-        }else{
-            nav  = _mainController.navigationController;
-        }
-    /*}else{
-        _mainController = nil;
-        LoginViewController *loginController = [[LoginViewController alloc] init];
-        nav = [[UINavigationController alloc] initWithRootViewController:loginController];
-        loginController.title = @"Bauma360";
-    }*/
+    [[ApplyViewController shareController] loadDataSourceFromLocalDB];
+    if (_mainController == nil) {
+        _mainController = [[MainViewController alloc] init];
+        nav = [[UINavigationController alloc] initWithRootViewController:_mainController];
+    }else{
+        nav  = _mainController.navigationController;
+    }
+
 
     if ([UIDevice currentDevice].systemVersion.floatValue < 7.0){
         nav.navigationBar.barStyle = UIBarStyleDefault;
-        [nav.navigationBar setBackgroundImage:[UIImage imageNamed:@"titleBar"]
-                                forBarMetrics:UIBarMetricsDefault];
+        //[nav.navigationBar setBackgroundImage:[UIImage imageNamed:@"titleBar"]
+                                //forBarMetrics:UIBarMetricsDefault];
+        [nav.navigationBar setBackgroundColor:[UIColor orangeColor]];
         
         [nav.navigationBar.layer setMasksToBounds:YES];
     }

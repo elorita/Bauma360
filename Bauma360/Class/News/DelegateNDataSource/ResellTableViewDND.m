@@ -41,7 +41,10 @@
 
 -(float)heightForRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView{
     ResellViewCell *vCell = [[[NSBundle mainBundle] loadNibNamed:@"ResellViewCell" owner:self options:nil] lastObject];
-    return vCell.frame.size.height;
+    if(aIndexPath.row < _loadedCount)
+        return vCell.frame.size.height;
+    else
+        return 75;
 }
 
 -(void)didSelectedRowAthIndexPath:(UITableView *)aTableView IndexPath:(NSIndexPath *)aIndexPath FromView:(CustomTableView *)aView{

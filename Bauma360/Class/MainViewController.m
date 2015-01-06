@@ -137,11 +137,13 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
 
 - (void)setupSubviews
 {
-    self.tabBar.backgroundImage = [[UIImage imageNamed:@"tabbarBackground"] stretchableImageWithLeftCapWidth:25 topCapHeight:25];
-    self.tabBar.selectionIndicatorImage = [[UIImage imageNamed:@"tabbarSelectBg"] stretchableImageWithLeftCapWidth:25 topCapHeight:25];
+    [self.tabBar setTintColor:[UIColor orangeColor]];
     
     _homeVC = [[HomeVC alloc] init];
     _homeVC.tabBarItem = [_homeVC.tabBarItem initWithTitle:@"有商机" image:[UIImage imageNamed:@"tabbar_glasses"] selectedImage:[UIImage imageNamed:@"tabbar_glassesHL"]];
+    [_homeVC.tabBarItem setTitleTextAttributes:[NSDictionary
+                                  dictionaryWithObjectsAndKeys: [UIColor grayColor],
+                                  NSForegroundColorAttributeName, nil] forState:UIControlStateNormal];
     _homeVC.tabBarItem.tag = 0;
     [self unSelectedTapTabBarItems:_homeVC.tabBarItem];
     [self selectedTapTabBarItems:_homeVC.tabBarItem];
@@ -162,6 +164,8 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     _settingsVC.tabBarItem = [_settingsVC.tabBarItem initWithTitle:@"设置" image:[UIImage imageNamed:@"tabbar_config"] selectedImage:[UIImage imageNamed:@"tabbar_configHL"]];
     _settingsVC.view.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     _settingsVC.tabBarItem.tag = 3;
+    
+    //设置选中和非选中状态的字体
     [self unSelectedTapTabBarItems:_settingsVC.tabBarItem];
     [self selectedTapTabBarItems:_settingsVC.tabBarItem];
     
@@ -172,7 +176,7 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
 -(void)unSelectedTapTabBarItems:(UITabBarItem *)tabBarItem
 {
     [tabBarItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                        [UIFont systemFontOfSize:14], NSFontAttributeName,[UIColor whiteColor],NSForegroundColorAttributeName,
+                                        [UIFont systemFontOfSize:12], NSFontAttributeName,[UIColor grayColor],NSForegroundColorAttributeName,
                                         nil] forState:UIControlStateNormal];
 }
 
@@ -180,7 +184,7 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
 {
     [tabBarItem setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                         [UIFont systemFontOfSize:14],
-                                        NSFontAttributeName,[UIColor colorWithRed:0.393 green:0.553 blue:1.000 alpha:1.000],NSForegroundColorAttributeName,
+                                        NSFontAttributeName,[UIColor orangeColor],NSForegroundColorAttributeName,
                                         nil] forState:UIControlStateSelected];
 }
 
