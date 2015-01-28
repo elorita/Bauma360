@@ -16,6 +16,8 @@
 
 - (instancetype)initWithChatter:(NSString *)chatter;
 
+- (instancetype)initWithConversation:(EMConversation *)conversation;
+
 - (instancetype)initWithGroup:(EMGroup *)chatGroup;
 
 @end

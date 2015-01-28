@@ -31,6 +31,8 @@
 #import "NSDate+Category.h"
 #import "DXMessageToolBar.h"
 
+#import "EMConversation+.h"
+
 #define KPageCount 20
 
 @interface ChatViewController ()<UITableViewDataSource, UITableViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, SRRefreshDelegate, IChatManagerDelegate, DXChatBarMoreViewDelegate, DXMessageToolBarDelegate, LocationViewDelegate, IDeviceManagerDelegate>
@@ -81,6 +83,21 @@
     return self;
 }
 
+- (instancetype)initWithConversation:(EMConversation *)conversation
+{
+    self = [super initWithNibName:nil bundle:nil];
+    if (self) {
+        // Custom initialization
+        _isPlayingAudio = NO;
+        
+        //根据接收者的username获取当前会话的管理者
+        _conversation = [[EaseMob sharedInstance].chatManager conversationForChatter:conversation.chatter isGroup:_isChatGroup];
+        _conversation.nickname = conversation.nickname;
+        _conversation.headPortrait = conversation.headPortrait;
+    }
+    return self;
+}
+
 - (instancetype)initWithGroup:(EMGroup *)chatGroup
 {
     self = [super initWithNibName:nil bundle:nil];
@@ -99,7 +116,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = [UIColor lightGrayColor];
+    self.view.backgroundColor = [UIColor whiteColor];
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
         self.edgesForExtendedLayout =  UIRectEdgeNone;
     }
@@ -389,6 +406,8 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
             }
             cell.messageModel = model;
+            //cell.headPortrait = _conversation.headPortrait;
+            
             
             return cell;
         }
@@ -645,7 +664,7 @@
                 if ([object isKindOfClass:[MessageModel class]]) {
                     EMMessage *currMsg = [weakSelf.dataSource objectAtIndex:i];
                     if ([message.messageId isEqualToString:currMsg.messageId]) {
-                        MessageModel *cellModel = [MessageModelManager modelWithMessage:message];
+                        MessageModel *cellModel = [MessageModelManager modelWithMessage:message withConversation:self->_conversation];
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [weakSelf.tableView beginUpdates];
                             [weakSelf.dataSource replaceObjectAtIndex:i withObject:cellModel];
@@ -1026,7 +1045,7 @@
                 self.chatTagDate = createDate;
             }
             
-            MessageModel *model = [MessageModelManager modelWithMessage:message];
+            MessageModel *model = [MessageModelManager modelWithMessage:message withConversation:_conversation];
             if (model) {
                 [resultArray addObject:model];
             }
@@ -1046,7 +1065,7 @@
         self.chatTagDate = createDate;
     }
     
-    MessageModel *model = [MessageModelManager modelWithMessage:message];
+    MessageModel *model = [MessageModelManager modelWithMessage:message withConversation:_conversation];
     if (model) {
         [ret addObject:model];
     }

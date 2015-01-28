@@ -16,6 +16,8 @@
 @implementation ResellViewCell
 {
     Resell *_myResell;
+    AVUser *_curUser;
+    BOOL _isWatchedByCurUser;
     PPImageScrollingCellView *_imageScrollingView;
 }
 
@@ -39,15 +41,12 @@
 }
 
 - (void)initialize{
-    _imageScrollingView = [[PPImageScrollingCellView alloc] initWithFrame:CGRectMake(0, kStartPointY, 320, kScrollingViewHieght)];
     [self setButtonsIcon];
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
 - (void)setButtonsIcon {
-    UIImage *collectionIamge = [UIImage imageNamed:@"star_line.png"];
-    //btnCollection.imageView.frame = CGRectMake(0, (btnCollection.frame.size.height - kButtonIconWidthNHeight) / 2, kButtonIconWidthNHeight, kButtonIconWidthNHeight);
-    btnCollection.imageView.contentMode = UIViewContentModeScaleAspectFit;
-    [btnCollection setImage:collectionIamge forState:UIControlStateNormal];
+    [self setWatchButton];
     
     UIImage *shareImage = [UIImage imageNamed:@"share.png"];
     btnShare.imageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -58,6 +57,34 @@
     [btnChat setImage:chatImage forState:UIControlStateNormal];
 }
 
+- (void)setWatchButton {
+    if (_curUser != nil) {
+        AVQuery *query = [AVRelation reverseQuery:_curUser.className relationKey:@"watchedResell" childObject:_myResell];
+        [query whereKey:@"objectId" equalTo:_curUser.objectId];
+        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            if (!error)
+            {
+                UIImage *watchImage = nil;
+                if (objects.count > 0)
+                {
+                    self->_isWatchedByCurUser = TRUE;
+                    watchImage = [UIImage imageNamed:@"watched.png"];
+                }
+                else
+                {
+                    self->_isWatchedByCurUser = FALSE;
+                    watchImage = [UIImage imageNamed:@"star_line.png"];
+                }
+                
+                self.btnCollection.imageView.contentMode = UIViewContentModeScaleAspectFit;
+                [self.btnCollection setImage:watchImage forState:UIControlStateNormal];
+            }
+        }];
+    } else {
+        [self.btnCollection setImage:[UIImage imageNamed:@"star_line.png"] forState:UIControlStateNormal];
+    }
+}
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 
@@ -66,9 +93,10 @@
 
 - (void) setResell:(Resell *) value showGalleryDelegate:(id)delegate {
     _myResell = value;
+    _curUser = [AVUser currentUser];
     titleLabel.text = value.title;
     summaryLabel.text = value.summary;
-    priceLabel.text = [NSString stringWithFormat:@"¥%d", value.price];
+    priceLabel.text = [NSString stringWithFormat:@"¥ %d", value.price];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yy-MM-dd HH:mm"];
     effectiveLabel.text = [dateFormatter stringFromDate: value.effectiveDate];
@@ -78,13 +106,14 @@
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error){
             if ([objects count] > 0){
-                [self->_imageScrollingView clearImageList];
+                //[self->_imageScrollingView clearImageList];
+                [self->_imageScrollingView removeFromSuperview];
+                self->_imageScrollingView = [[PPImageScrollingCellView alloc] initWithFrame:CGRectMake(0, kStartPointY, 320, kScrollingViewHieght)];
                 self->_imageScrollingView.delegate = delegate;
                 self->_imageScrollingView.backgroundColor = [UIColor clearColor];
                 [self.imageScrollContentView addSubview:self->_imageScrollingView];
             }
             
-            NSMutableArray *images = [[NSMutableArray alloc] init];
             for (ResellImage *imageFile in objects) {
                 //todo:最初根据images的count先创建滚动视图，随后每返回一个thumb，则向滚动视图刷新一个图片
                 [imageFile.image getThumbnail:YES width:144 height:144 withBlock:^(UIImage *image, NSError *error) {
@@ -105,11 +134,33 @@
 
 -(IBAction)callClick:(id)sender
 {
-    if ([_delegate respondsToSelector:@selector(callOwner:)]) {
-        [_myResell.owner fetchIfNeededInBackgroundWithBlock:^(AVObject *object, NSError *error) {
-            AVUser *user = (AVUser *)object;
-            [self->_delegate callOwner: user];
+    if (_curUser != nil) {
+        if ([_delegate respondsToSelector:@selector(callOwner:)]) {
+            [_myResell.owner fetchIfNeededInBackgroundWithBlock:^(AVObject *object, NSError *error) {
+                AVUser *user = (AVUser *)object;
+                [self->_delegate callOwner: user];
+            }];
+        }
+    } else {
+        TTAlertNoTitle(@"您尚未登录，无法与卖家联系");
+    }
+}
+
+-(IBAction)watchClick:(id)sender {
+    if (_curUser != nil) {
+        AVRelation *relation = [_curUser relationforKey:@"watchedResell"];
+        if (!_isWatchedByCurUser)
+            [relation addObject:_myResell];
+        else
+            [relation removeObject:_myResell];
+        [_curUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                [self setWatchButton];
+            }
         }];
+    }
+    else {
+        TTAlertNoTitle(@"您尚未登录，无法收藏机源");
     }
 }
 

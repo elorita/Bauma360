@@ -33,6 +33,7 @@
 -(IBAction)simuCertifiedClick:(id)sender;
 
 -(IBAction)callClick:(id)sender;
+-(IBAction)watchClick:(id)sender;
 
 - (void)initialize;
 - (void) setResell:(Resell *) value showGalleryDelegate:(id)delegate;

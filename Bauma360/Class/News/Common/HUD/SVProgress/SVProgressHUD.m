@@ -212,7 +212,13 @@ CGFloat SVProgressHUDRingThickness = 6;
     BOOL imageUsed = (self.imageView.image) || (self.imageView.hidden);
     
     if(string) {
-        CGSize stringSize = [string sizeWithFont:self.stringLabel.font constrainedToSize:CGSizeMake(200, 300)];
+        //设置段落模式
+        NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+        paragraph.alignment = NSLineBreakByWordWrapping;
+        NSDictionary *attribute = @{NSFontAttributeName:self.stringLabel.font, NSParagraphStyleAttributeName: paragraph};
+        CGSize stringSize = [string boundingRectWithSize:CGSizeMake(200, 300) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+        
+        //CGSize stringSize = [string sizeWithFont:self.stringLabel.font constrainedToSize:CGSizeMake(200, 300)];
         stringWidth = stringSize.width;
         stringHeight = stringSize.height;
         if (imageUsed)
@@ -307,7 +313,7 @@ CGFloat SVProgressHUDRingThickness = 6;
 - (void)positionHUD:(NSNotification*)notification {
     
     CGFloat keyboardHeight;
-    double animationDuration;
+    double animationDuration = 0.0;
     
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
     
@@ -518,11 +524,11 @@ CGFloat SVProgressHUDRingThickness = 6;
                          if(weakSelf.alpha == 0) {
                              [[NSNotificationCenter defaultCenter] removeObserver:weakSelf];
                              [weakSelf cancelRingLayerAnimation];
-                             [hudView removeFromSuperview];
-                             hudView = nil;
+                             [self->hudView removeFromSuperview];
+                             self->hudView = nil;
                              
-                             [overlayView removeFromSuperview];
-                             overlayView = nil;
+                             [self->overlayView removeFromSuperview];
+                             self->overlayView = nil;
 
                              UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
 

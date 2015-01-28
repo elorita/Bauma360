@@ -67,7 +67,7 @@
                         <rect key="frame" x="216" y="201" width="96" height="30"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                        <state key="normal" title="分享">
+                        <state key="normal" title=" 分享">
                             <color key="titleColor" cocoaTouchSystemColor="lightTextColor"/>
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
@@ -76,16 +76,19 @@
                         <rect key="frame" x="112" y="201" width="96" height="30"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                        <state key="normal" title="收藏">
+                        <state key="normal" title=" 收藏">
                             <color key="titleColor" cocoaTouchSystemColor="lightTextColor"/>
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
+                        <connections>
+                            <action selector="watchClick:" destination="mCc-Er-rUg" eventType="touchUpInside" id="7JA-tU-kpw"/>
+                        </connections>
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="npD-Tb-5h3">
                         <rect key="frame" x="8" y="201" width="96" height="30"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                        <state key="normal" title="联系">
+                        <state key="normal" title=" 联系">
                             <color key="titleColor" cocoaTouchSystemColor="lightTextColor"/>
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>

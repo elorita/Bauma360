@@ -17,6 +17,7 @@
 @property(nonatomic,copy) NSString *body;
 @property(nonatomic,retain) AVFile *listImageFile;
 @property(nonatomic,retain) AVFile *mainImageFile;
+@property(nonatomic,retain) AVFile *headerImageFile;
 @property(nonatomic,retain) AVRelation *clips;
 
 

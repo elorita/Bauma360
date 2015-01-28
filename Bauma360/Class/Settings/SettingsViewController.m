@@ -172,7 +172,7 @@
     if (section == 1) {
         CGRect frameRect = CGRectMake(20, 30, 320, 20);
         UILabel *label = [[UILabel alloc] initWithFrame:frameRect];
-        label.backgroundColor = [UIColor colorWithRed:78.0/255.0 green:188.0/255.0 blue:211.0/255.0 alpha:1];
+        label.backgroundColor = [UIColor orangeColor];
         label.font = [UIFont boldSystemFontOfSize:14];
         label.textAlignment = NSTextAlignmentCenter;
         label.textColor = [UIColor whiteColor];
@@ -231,7 +231,7 @@
 - (UIView *)footerView
 {
     if (_footerView == nil) {
-        _footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 80)];
+        _footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 130)];
         _footerView.backgroundColor = [UIColor clearColor];
         
         UIView *line = [[UIView alloc] initWithFrame:CGRectMake(10, 0, _footerView.frame.size.width - 10, 0.5)];
@@ -240,9 +240,7 @@
         
         UIButton *logoutButton = [[UIButton alloc] initWithFrame:CGRectMake(40, 20, _footerView.frame.size.width - 80, 40)];
         [logoutButton setBackgroundColor:[UIColor colorWithRed:191 / 255.0 green:48 / 255.0 blue:49 / 255.0 alpha:1.0]];
-        NSDictionary *loginInfo = [[EaseMob sharedInstance].chatManager loginInfo];
-        NSString *username = [loginInfo objectForKey:kSDKUsername];
-        NSString *logoutButtonTitle = [[NSString alloc] initWithFormat:@"退出登录(%@)", username];
+        NSString *logoutButtonTitle = @"退出登录";
         [logoutButton setTitle:logoutButtonTitle forState:UIControlStateNormal];
         [logoutButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [logoutButton addTarget:self action:@selector(logoutAction) forControlEvents:UIControlEventTouchUpInside];

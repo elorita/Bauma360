@@ -11,6 +11,7 @@
 #import "RFID.h"
 #import "Product.h"
 #import "ShowProductView.h"
+#import "CustomColor.h"
 
 @interface ShowProductInfoViewController ()
 
@@ -46,7 +47,7 @@
     }
     
     UIView *vContentView = [[UIView alloc] initWithFrame:[self getContentViewRect]];
-    [vContentView setBackgroundColor:[UIColor colorWithRed:78.0/255.0 green:188.0/255.0 blue:211.0/255.0 alpha:1]];
+    [vContentView setBackgroundColor:[UIColor orangeColor]];
     
     self.view = vContentView;
     

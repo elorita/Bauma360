@@ -93,9 +93,9 @@
 //EASESDK调用：SDK注册 APNS文件的名字, 需要与后台上传证书时的名字一一对应
     NSString *apnsCertName = nil;
 #if DEBUG
-    apnsCertName = @"bm360";
+    apnsCertName = @"ios_dev";
 #else
-    apnsCertName = @"bm360";
+    apnsCertName = @"pro";
 #endif
     [[EaseMob sharedInstance] registerSDKWithAppKey:@"simu#bauma360" apnsCertName:apnsCertName];
     
@@ -146,7 +146,7 @@
 - (void)moveToUpSide {
     [UIView animateWithDuration:0.7 //速度0.7秒
                      animations:^{//修改rView坐标
-                         rView.frame = CGRectMake(self.window.frame.origin.x,
+                         self->rView.frame = CGRectMake(self.window.frame.origin.x,
                                                   -self.window.frame.size.height,
                                                   self.window.frame.size.width,
                                                   self.window.frame.size.height);

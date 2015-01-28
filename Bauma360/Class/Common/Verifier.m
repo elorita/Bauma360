@@ -61,6 +61,15 @@
     }
 }
 
++ (BOOL)isValidUsername:(NSString *)username {
+    NSString *vs = @"^[a-zA-Z0-9]{1}[a-zA-Z0-9|-|_]{2-16}[a-zA-Z0-9]{1}$";
+    NSPredicate *regxtestUsername = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", vs];
+    if ([regxtestUsername evaluateWithObject:username] == YES)
+        return YES;
+    else
+        return NO;
+}
+
 //////// 特殊字符的限制输入，价格金额的有效性判断
 
 //#define myDotNumbers     @"0123456789.\n"

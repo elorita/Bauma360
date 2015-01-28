@@ -67,7 +67,13 @@ NSString *const kRouterEventTextURLTapEventName = @"kRouterEventTextURLTapEventN
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
         retSize = [self.model.content boundingRectWithSize:textBlockMinSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[[self class] textLabelFont]} context:nil].size;
     }else{
-        retSize = [self.model.content sizeWithFont:[[self class] textLabelFont] constrainedToSize:textBlockMinSize lineBreakMode:[[self class] textLabelLineBreakModel]];
+        //设置段落模式
+        NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+        paragraph.alignment = NSLineBreakByWordWrapping;
+        NSDictionary *attribute = @{NSFontAttributeName:[[self class] textLabelFont], NSParagraphStyleAttributeName: paragraph};
+        retSize = [self.model.content boundingRectWithSize:textBlockMinSize options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+        
+        //retSize = [self.model.content sizeWithFont:[[self class] textLabelFont] constrainedToSize:textBlockMinSize lineBreakMode:[[self class] textLabelLineBreakModel]];
     }
     
     CGFloat height = 40;
@@ -270,7 +276,13 @@ NSString *const kRouterEventTextURLTapEventName = @"kRouterEventTextURLTapEventN
     if (systemVersion >= 7.0) {
         size = [object.content boundingRectWithSize:textBlockMinSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[self textLabelFont]} context:nil].size;
     }else{
-        size = [object.content sizeWithFont:[self textLabelFont] constrainedToSize:textBlockMinSize lineBreakMode:[self textLabelLineBreakModel]];
+        //设置段落模式
+        NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+        paragraph.alignment = NSLineBreakByWordWrapping;
+        NSDictionary *attribute = @{NSFontAttributeName:[self textLabelFont], NSParagraphStyleAttributeName: paragraph};
+        size = [object.content boundingRectWithSize:textBlockMinSize options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+        
+        //size = [object.content sizeWithFont:[self textLabelFont] constrainedToSize:textBlockMinSize lineBreakMode:[self textLabelLineBreakModel]];
     }
     return 2 * BUBBLE_VIEW_PADDING + size.height;
 }

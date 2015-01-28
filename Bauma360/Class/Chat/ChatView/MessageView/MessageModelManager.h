@@ -16,4 +16,6 @@
 
 + (id)modelWithMessage:(EMMessage *)message;
 
++ (id)modelWithMessage:(EMMessage *)message withConversation:(EMConversation *)conversation;
+
 @end

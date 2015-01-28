@@ -10,20 +10,20 @@
 
 @implementation SGFocusImageItem
 @synthesize title = _title;
-@synthesize image = _image;
+@synthesize imageFile = _imageFile;
 @synthesize tag = _tag;
 
 - (void)dealloc
 {
     self.title = nil;
-    self.image = nil;
+    self.imageFile = nil;
 }
-- (id)initWithTitle:(NSString *)title image:(NSString *)image tag:(NSInteger)tag
+- (id)initWithTitle:(NSString *)title image:(AVFile *)imageFile tag:(NSInteger)tag
 {
     self = [super init];
     if (self) {
         self.title = title;
-        self.image = image;
+        self.imageFile = imageFile;
         self.tag = tag;
     }
     
@@ -38,8 +38,8 @@
         if ([dict isKindOfClass:[NSDictionary class]])
         {
             self.title = [dict objectForKey:@"title"];
-            self.image = [dict objectForKey:@"image"];
-            //...
+            self.imageFile = [dict objectForKey:@"image"];
+            self.tag = tag;
         }
     }
     return self;

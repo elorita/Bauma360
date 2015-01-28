@@ -210,6 +210,14 @@ static NSString *const kReadingBoardNib_iPad   = @"RSReadingBoard_iPad";
     if (self.lTitle.textColor) {
         [self.oldConstants setObject:self.lTitle.textColor forKey:[NSString stringWithFormat:@"%@%@", PROPERTY_NAME(self.lTitle), @"Color"]];
     }
+    
+    UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    [backButton setImage:[UIImage imageNamed:@"return.png"] forState:UIControlStateNormal];
+    [backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    [self.navigationItem setLeftBarButtonItem:backItem];
+    
+    self.title = @"资讯";
 }
 
 - (NSUInteger)supportedInterfaceOrientations
@@ -554,6 +562,11 @@ static NSString *const kReadingBoardNib_iPad   = @"RSReadingBoard_iPad";
             clipView.frame = [self.clipViewsFrames[clipView.tag] CGRectValue];
         }
     }
+}
+
+- (void)back
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

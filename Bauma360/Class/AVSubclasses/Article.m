@@ -10,7 +10,7 @@
 
 @implementation Article
 
-@dynamic title, source, date, summary, body, listImageFile, mainImageFile;
+@dynamic title, source, date, summary, body, listImageFile, mainImageFile, headerImageFile;
 
 + (NSString *)parseClassName {
     return @"Article";

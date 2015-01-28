@@ -36,23 +36,23 @@
 
 #pragma mark UI初始化
 -(void)commInit{
-    NSArray *vButtonItemArray = @[@{NOMALKEY: @"normal",
-                                    HEIGHTKEY:@"helight",
+    NSArray *vButtonItemArray = @[@{NOMALKEY: @"subTabbar_normal",
+                                    HEIGHTKEY:@"subTabbar_highLight",
                                     TITLEKEY:@"二手",
                                     TITLEWIDTH:[NSNumber numberWithFloat:160]
                                     },
-                                  @{NOMALKEY: @"normal.png",
-                                    HEIGHTKEY:@"helight.png",
+                                  @{NOMALKEY: @"subTabbar_normal",
+                                    HEIGHTKEY:@"subTabbar_highLight",
                                     TITLEKEY:@"资讯",
                                     TITLEWIDTH:[NSNumber numberWithFloat:160]
                                     },
-//                                  @{NOMALKEY: @"normal.png",
-//                                    HEIGHTKEY:@"helight.png",
+//                                  @{NOMALKEY: @"subTabbar_normal",
+//                                    HEIGHTKEY:@"subTabbar_highLight",
 //                                    TITLEKEY:@"商家",
 //                                    TITLEWIDTH:[NSNumber numberWithFloat:80]
 //                                    },
-//                                  @{NOMALKEY: @"normal",
-//                                    HEIGHTKEY:@"helight",
+//                                  @{NOMALKEY: @"subTabbar_normal",
+//                                    HEIGHTKEY:@"subTabbar_highLight",
 //                                    TITLEKEY:@"圈子",
 //                                    TITLEWIDTH:[NSNumber numberWithFloat:80]
 //                                    },

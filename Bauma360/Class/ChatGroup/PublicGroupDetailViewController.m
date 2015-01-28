@@ -161,7 +161,13 @@
         return 50;
     }
     else{
-        CGSize size = [_group.groupDescription sizeWithFont:[UIFont systemFontOfSize:15.0] constrainedToSize:CGSizeMake(220, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
+        //设置段落模式
+        NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+        paragraph.alignment = NSLineBreakByWordWrapping;
+        NSDictionary *attribute = @{NSFontAttributeName:[UIFont systemFontOfSize:15.0], NSParagraphStyleAttributeName: paragraph};
+        CGSize size = [_group.groupDescription boundingRectWithSize:CGSizeMake(220, MAXFLOAT) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+        
+        //CGSize size = [_group.groupDescription sizeWithFont:[UIFont systemFontOfSize:15.0] constrainedToSize:CGSizeMake(220, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
         
         return size.height > 30 ? (20 + size.height) : 50;
     }

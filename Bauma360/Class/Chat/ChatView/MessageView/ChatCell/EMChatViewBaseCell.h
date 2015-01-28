@@ -36,10 +36,10 @@ extern NSString *const kRouterEventChatHeadImageTapEventName;
     
     CGFloat _nameLabelHeight;
     MessageModel *_messageModel;
+    UIImage *headPortrait;
 }
 
 @property (nonatomic, strong) MessageModel *messageModel;
-
 @property (nonatomic, strong) UIImageView *headImageView;       //头像
 @property (nonatomic, strong) UILabel *nameLabel;               //姓名（暂时不支持显示）
 @property (nonatomic, strong) EMChatBaseBubbleView *bubbleView;   //内容区域

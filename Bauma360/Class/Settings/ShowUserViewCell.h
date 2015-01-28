@@ -21,7 +21,7 @@
 @property (nonatomic, retain) id<ShowUserCellDelegate> delegate;
 
 - (void)setPortaintImage: (UIImage *)image;
-- (void)refreshSignStatu:(BOOL) isSigned;
+//- (void)refreshSignStatu:(BOOL) isSigned;
 - (void)initialize;
 
 @end

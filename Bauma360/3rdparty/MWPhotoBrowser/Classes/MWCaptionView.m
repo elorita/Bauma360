@@ -62,9 +62,13 @@ static const CGFloat labelPadding = 10;
     } else {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        textSize = [_label.text sizeWithFont:_label.font
-                           constrainedToSize:CGSizeMake(size.width - labelPadding*2, maxHeight)
-                               lineBreakMode:_label.lineBreakMode];
+        //设置段落模式
+        NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+        paragraph.alignment = NSLineBreakByWordWrapping;
+        NSDictionary *attribute = @{NSFontAttributeName:_label.font, NSParagraphStyleAttributeName: paragraph};
+        textSize = [_label.text boundingRectWithSize:CGSizeMake(size.width - labelPadding*2, maxHeight) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+        
+        //textSize = [_label.text sizeWithFont:_label.font constrainedToSize:CGSizeMake(size.width - labelPadding*2, maxHeight) lineBreakMode:_label.lineBreakMode];
 #pragma clang diagnostic pop
     }
     return CGSizeMake(size.width, textSize.height + labelPadding * 2);

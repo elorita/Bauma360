@@ -27,6 +27,7 @@
     ResellViewCell *vCell = [aTableView dequeueReusableCellWithIdentifier:vCellIdentify];
     if (vCell == nil) {
         vCell = [[[NSBundle mainBundle] loadNibNamed:@"ResellViewCell" owner:self options:nil] lastObject];
+        //vCell.selectionStyle = UITableViewCellSelectionStyleNone;
         vCell.delegate = self;
     }
     

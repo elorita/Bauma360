@@ -19,8 +19,10 @@
 #import "ChatViewController.h"
 #import "EMSearchDisplayController.h"
 #import "ConvertToCommonEmoticonsHelper.h"
+#import "EMConversation+.h"
 
 #import <AVOSCloud/AVOSCloud.h>
+#import "ShareInstances.h"
 
 @interface ChatListViewController ()<UITableViewDelegate,UITableViewDataSource, UISearchDisplayDelegate,SRRefreshDelegate, UISearchBarDelegate, IChatManagerDelegate>
 
@@ -56,6 +58,8 @@
     [self networkStateView];
     
     [self searchController];
+    if ([AVUser currentUser] != nil)
+        [ShareInstances setCurrentUserHeadPortraitWithUserName:[[AVUser currentUser] username]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -103,7 +107,7 @@
         _searchBar = [[EMSearchBar alloc] initWithFrame: CGRectMake(0, 0, self.view.frame.size.width, 44)];
         _searchBar.delegate = self;
         _searchBar.placeholder = @"搜索";
-        _searchBar.backgroundColor = [UIColor colorWithRed:0.747 green:0.756 blue:0.751 alpha:1.000];
+        _searchBar.backgroundImage = [UIImage imageNamed:@"subTabbar_normal"];
     }
     
     return _searchBar;
@@ -296,11 +300,12 @@
         cell = [[ChatListCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identify];
     }
     EMConversation *conversation = [self.dataSource objectAtIndex:indexPath.row];
-    cell.name = conversation.chatter;
+    
     if (!conversation.isGroup) {
-        cell.placeholderImage = [UIImage imageNamed:@"chatListCellHead.png"];
+        [self loadHeadPortraitAndNicknameWithUserName:conversation setCell:cell];
     }
     else{
+        cell.name = conversation.chatter;
         NSString *imageName = @"groupPublicHeader";
         NSArray *groupArray = [[EaseMob sharedInstance].chatManager groupList];
         for (EMGroup *group in groupArray) {
@@ -321,6 +326,31 @@
         cell.contentView.backgroundColor = [UIColor whiteColor];
     }
     return cell;
+}
+
+-(void)loadHeadPortraitAndNicknameWithUserName: (EMConversation *)conversation setCell: (ChatListCell *) cell {
+    //先设置一个缺省头像
+    cell.placeholderImage = [UIImage imageNamed:@"chatListCellHead.png"];
+    
+    AVQuery *query = [AVUser query];
+    [query whereKey:@"username" equalTo:conversation.chatter];
+    query.cachePolicy = kPFCachePolicyCacheElseNetwork;
+    query.maxCacheAge = 24 * 3600;
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error && objects.count > 0) {
+            AVUser *user = [objects objectAtIndex:0];
+            conversation.nickname = [user objectForKey:@"nickname"];
+            cell.name = conversation.nickname;
+            AVFile *headPortraitFile = [user objectForKey:@"headPortrait"];
+            [headPortraitFile getThumbnail:YES width:88 height:88 withBlock:^(UIImage *image, NSError *error) {
+                if (!error) {
+                    conversation.headPortrait = image;
+                    cell.placeholderImage = conversation.headPortrait;
+                }
+                [cell layoutSubviews];
+            }];
+        }
+    }];
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -353,11 +383,31 @@
         }
     }
     else{
-        chatController = [[ChatViewController alloc] initWithChatter:conversation.chatter];
+        title = [self getNicknameWithUsername:conversation];
+        chatController = [[ChatViewController alloc] initWithConversation:conversation];
     }
     chatController.title = title;
     [conversation markMessagesAsRead:YES];
     [self.navigationController pushViewController:chatController animated:YES];
+}
+
+-(NSString *)getNicknameWithUsername: (EMConversation *)conversation {
+    if (!([conversation.nickname isEqual: @""] || conversation.nickname == nil)) {
+        return conversation.nickname;
+    } else {
+        AVQuery *query = [AVUser query];
+        [query whereKey:@"username" equalTo:conversation.chatter];
+        query.cachePolicy = kPFCachePolicyCacheElseNetwork;
+        query.maxCacheAge = 24 * 3600;
+        NSArray *objects = [query findObjects];
+        if (objects.count > 0) {
+            AVUser *user = [objects objectAtIndex:0];
+            conversation.nickname = [user objectForKey:@"nickname"];
+            return conversation.nickname;
+        } else {
+            return @"匿名好友";
+        }
+    }
 }
 
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{

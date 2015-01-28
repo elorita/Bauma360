@@ -124,11 +124,17 @@ static CGFloat SWITCH_FOCUS_PICTURE_INTERVAL = 5.0; //switch interval time
     CGSize size = CGSizeMake(320, 0);
     for (int i = 0; i < aImageItems.count; i++) {
         SGFocusImageItem *item = [aImageItems objectAtIndex:i];
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i * _scrollView.frame.size.width+space, space, _scrollView.frame.size.width-space*2, _scrollView.frame.size.height-2*space-size.height)];
-        //加载图片
-        imageView.backgroundColor = i%2?[UIColor redColor]:[UIColor blueColor];
-        imageView.image = [UIImage imageNamed:item.image];
-        [_scrollView addSubview:imageView];
+        [item.imageFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+            if (!error) {
+                UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i * self->_scrollView.frame.size.width+space, space, self->_scrollView.frame.size.width-space*2, self->_scrollView.frame.size.height-2*space-size.height)];
+                //加载图片
+                imageView.backgroundColor = i%2?[UIColor orangeColor]:[UIColor blueColor];
+                imageView.image = [UIImage imageWithData:data];
+                [self->_scrollView addSubview:imageView];
+            }
+        }];
+//        imageView.image = [UIImage imageNamed:item.image];
+//        [_scrollView addSubview:imageView];
     }
     _scrollView.contentSize = CGSizeMake(_scrollView.frame.size.width * aImageItems.count, _scrollView.frame.size.height);
     _pageControl.numberOfPages = aImageItems.count>1?aImageItems.count -2:aImageItems.count;

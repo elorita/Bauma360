@@ -57,7 +57,7 @@
 
 - (void) setImageData:(NSArray*)collectionImageData{
 
-    _originImageData = collectionImageData;
+    _originImageData = [NSMutableArray arrayWithArray:collectionImageData];
     for (UIImage* img in _originImageData) {
         [_collectionImageData addObject:[ImageHelper generateSquareThumbnail:img withLength:144.0]];
     }

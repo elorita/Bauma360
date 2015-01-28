@@ -17,24 +17,9 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HP1-ku-0fl">
-                    <rect key="frame" x="35" y="149" width="80" height="44"/>
-                    <color key="backgroundColor" red="0.3411764705882353" green="0.72941176470588232" blue="0.81568627450980391" alpha="1" colorSpace="calibratedRGB"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
-                    <state key="normal" title="注册">
-                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
-                    <state key="highlighted">
-                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
-                    <connections>
-                        <action selector="doRegister:" destination="-1" eventType="touchUpInside" id="dVL-6w-FBQ"/>
-                    </connections>
-                </button>
                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g7n-mh-wjo">
-                    <rect key="frame" x="125" y="149" width="160" height="43"/>
-                    <color key="backgroundColor" red="0.0" green="0.396078431372549" blue="0.4823529411764706" alpha="1" colorSpace="calibratedRGB"/>
+                    <rect key="frame" x="45" y="149" width="240" height="43"/>
+                    <color key="backgroundColor" red="0.93333333333333335" green="0.4823529411764706" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <fontDescription key="fontDescription" type="boldSystem" size="button"/>
                     <state key="normal" title="登录">
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -47,11 +32,8 @@
                         <action selector="doLogin:" destination="-1" eventType="touchUpInside" id="7qQ-wk-5XS"/>
                     </connections>
                 </button>
-                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" image="iPhone.png" translatesAutoresizingMaskIntoConstraints="NO" id="WLm-ym-HRF">
-                    <rect key="frame" x="45" y="36" width="24" height="24"/>
-                </imageView>
-                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="手机号" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="5nx-ZL-XsB" userLabel="username - 个人账号/手机">
-                    <rect key="frame" x="77" y="29" width="198" height="38"/>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="用户名 / 手机号" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="5nx-ZL-XsB" userLabel="username - 个人账号/手机">
+                    <rect key="frame" x="45" y="29" width="230" height="38"/>
                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                     <textInputTraits key="textInputTraits"/>
                 </textField>
@@ -59,11 +41,8 @@
                     <rect key="frame" x="45" y="66" width="230" height="1"/>
                     <color key="backgroundColor" red="0.84313725490000002" green="0.84705882349999995" blue="0.84705882349999995" alpha="1" colorSpace="calibratedRGB"/>
                 </view>
-                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" image="Lock.png" translatesAutoresizingMaskIntoConstraints="NO" id="7QU-5S-CKE">
-                    <rect key="frame" x="45" y="82" width="24" height="24"/>
-                </imageView>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="密码" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Ki0-c8-RwZ" userLabel="password - 密码">
-                    <rect key="frame" x="77" y="75" width="147" height="38"/>
+                    <rect key="frame" x="45" y="75" width="179" height="38"/>
                     <color key="tintColor" red="0.74977948589999999" green="0.18706713229999999" blue="0.19164996079999999" alpha="1" colorSpace="calibratedRGB"/>
                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                     <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
@@ -74,11 +53,26 @@
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Fd-aG-Q3c">
                     <rect key="frame" x="251" y="82" width="24" height="24"/>
-                    <state key="normal" backgroundImage="Eye.png">
+                    <state key="normal" backgroundImage="lock.png">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
                         <action selector="doShowHidePassword:" destination="-1" eventType="touchUpInside" id="nTJ-Vy-tJK"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HP1-ku-0fl">
+                    <rect key="frame" x="45" y="200" width="240" height="44"/>
+                    <color key="backgroundColor" red="0.96470588235294119" green="0.6470588235294118" blue="0.22745098039215686" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                    <state key="normal" title="还没有账号  注册一个">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="highlighted">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="doRegister:" destination="-1" eventType="touchUpInside" id="dVL-6w-FBQ"/>
                     </connections>
                 </button>
             </subviews>
@@ -86,9 +80,7 @@
         </view>
     </objects>
     <resources>
-        <image name="Eye.png" width="56" height="56"/>
-        <image name="Lock.png" width="50" height="50"/>
-        <image name="iPhone.png" width="50" height="50"/>
+        <image name="lock.png" width="52" height="52"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

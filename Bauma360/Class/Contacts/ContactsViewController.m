@@ -10,6 +10,8 @@
   * from EaseMob Technologies.
   */
 
+#import <AVOSCloud/AVOSCloud.h>
+
 #import "ContactsViewController.h"
 
 #import "BaseTableViewCell.h"
@@ -90,7 +92,7 @@
         _searchBar = [[EMSearchBar alloc] init];
         _searchBar.delegate = self;
         _searchBar.placeholder = @"搜索";
-        _searchBar.backgroundColor = [UIColor colorWithRed:0.747 green:0.756 blue:0.751 alpha:1.000];
+        _searchBar.backgroundImage = [UIImage imageNamed:@"subTabbar_normal"];
     }
     
     return _searchBar;
@@ -247,12 +249,36 @@
         }
         else{
             EMBuddy *buddy = [[self.dataSource objectAtIndex:(indexPath.section - 1)] objectAtIndex:indexPath.row];
-            cell.imageView.image = [UIImage imageNamed:@"chatListCellHead.png"];
-            cell.textLabel.text = buddy.username;
+            [self loadHeadPortraitAndNicknameWithUserName:buddy.username setCell:cell];
         }
     }
     
     return cell;
+}
+
+-(void)loadHeadPortraitAndNicknameWithUserName: (NSString *)username setCell: (BaseTableViewCell *) cell {
+    //先设置一个缺省头像
+    cell.imageView.image = [UIImage imageNamed:@"chatListCellHead.png"];
+    cell.imageView.layer.cornerRadius = 5;
+    cell.imageView.layer.masksToBounds = YES;
+    
+    AVQuery *query = [AVUser query];
+    [query whereKey:@"username" equalTo:username];
+    query.cachePolicy = kPFCachePolicyCacheElseNetwork;
+    query.maxCacheAge = 24 * 3600;
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error && objects.count > 0) {
+            AVUser *user = [objects objectAtIndex:0];
+            cell.textLabel.text = [user objectForKey:@"nickname"];
+            AVFile *headPortraitFile = [user objectForKey:@"headPortrait"];
+            [headPortraitFile getThumbnail:YES width:88 height:88 withBlock:^(UIImage *image, NSError *error) {
+                if (!error)
+                    cell.imageView.image = image;
+                
+                [cell layoutSubviews];
+            }];
+        }
+    }];
 }
 
 // Override to support conditional editing of the table view.
@@ -380,8 +406,22 @@
         }
         
         ChatViewController *chatVC = [[ChatViewController alloc] initWithChatter:buddy.username];
-        chatVC.title = buddy.username;
+        chatVC.title = [self getNicknameWithUsername: buddy.username];
         [self.navigationController pushViewController:chatVC animated:YES];
+    }
+}
+
+-(NSString *)getNicknameWithUsername: (NSString *)username {
+    AVQuery *query = [AVUser query];
+    [query whereKey:@"username" equalTo:username];
+    query.cachePolicy = kPFCachePolicyCacheElseNetwork;
+    query.maxCacheAge = 24 * 3600;
+    NSArray *objects = [query findObjects];
+    if (objects.count > 0) {
+        AVUser *user = [objects objectAtIndex:0];
+        return [user objectForKey:@"nickname"];
+    } else {
+        return @"匿名好友";
     }
 }
 
@@ -568,7 +608,14 @@
     else
     {
         NSString *tmpStr = [NSString stringWithFormat:@"%i", count];
-        CGSize size = [tmpStr sizeWithFont:self.unapplyCountLabel.font constrainedToSize:CGSizeMake(50, 20) lineBreakMode:NSLineBreakByWordWrapping];
+        
+        //设置段落模式
+        NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+        paragraph.alignment = NSLineBreakByWordWrapping;
+        NSDictionary *attribute = @{NSFontAttributeName:self.unapplyCountLabel.font, NSParagraphStyleAttributeName: paragraph};
+        CGSize size = [tmpStr boundingRectWithSize:CGSizeMake(50, 20) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+        
+        //CGSize size = [tmpStr sizeWithFont:self.unapplyCountLabel.font constrainedToSize:CGSizeMake(50, 20) lineBreakMode:NSLineBreakByWordWrapping];
         CGRect rect = self.unapplyCountLabel.frame;
         rect.size.width = size.width > 20 ? size.width : 20;
         self.unapplyCountLabel.text = tmpStr;

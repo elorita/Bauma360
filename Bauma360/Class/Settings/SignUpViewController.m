@@ -13,6 +13,7 @@
 
 @interface SignUpViewController ()
 
+@property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *phoneNoTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 
@@ -27,10 +28,19 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _usernameTextField.keyboardType = UIKeyboardTypeASCIICapable;
     _phoneNoTextField.keyboardType = UIKeyboardTypeNumberPad;
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
         self.edgesForExtendedLayout = UIRectEdgeNone;
     // Do any additional setup after loading the view from its nib.
+    
+    UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    [backButton setImage:[UIImage imageNamed:@"return.png"] forState:UIControlStateNormal];
+    [backButton addTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    [self.navigationItem setLeftBarButtonItem:backItem];
+    
+    self.title = @"注册";
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -46,6 +56,18 @@
 - (IBAction)doRegister:(id)sender {
     if (![self isEmpty]) {
         [self.view endEditing:YES];
+        if ([_usernameTextField.text isEqual:@""]) {
+            UIAlertView *alert = [[UIAlertView alloc]
+                                  initWithTitle:@"^_^请填写用户名"
+                                  message:nil
+                                  delegate:nil
+                                  cancelButtonTitle:@"确定"
+                                  otherButtonTitles:nil];
+            
+            [alert show];
+            
+            return;
+        }
         if (![Verifier isMobileNumber:_phoneNoTextField.text]) {
             UIAlertView *alert = [[UIAlertView alloc]
                                   initWithTitle:@"^_^手机号码格式有误，请修正后重试"
@@ -63,9 +85,10 @@
         
         //注册AVOSCloud
         user = [AVUser user];
-        user.username = _phoneNoTextField.text;
+        user.username = _usernameTextField.text;
         user.password =  _passwordTextField.text;
         user.mobilePhoneNumber = _phoneNoTextField.text;
+        [user setObject:_usernameTextField.text forKey:@"nickname"];
         //[user setObject:@"213-253-0000" forKey:@"phone"];
         
 //        [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {

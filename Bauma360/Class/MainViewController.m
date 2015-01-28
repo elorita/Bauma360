@@ -17,10 +17,15 @@
 #import "ApplyViewController.h"
 #import "HomeVC.h"
 
+#import "PassValueDelegate.h"
+#import "QRScanViewController.h"
+#import "ShowProductInfoViewController.h"
+#import "ZBarSDK.h"
+
 //两次提示的默认间隔
 static const CGFloat kDefaultPlaySoundInterval = 3.0;
 
-@interface MainViewController () <UIAlertViewDelegate, IChatManagerDelegate>
+@interface MainViewController () <UIAlertViewDelegate, IChatManagerDelegate, PassValueDelegate>
 {
     ChatListViewController *_chatListVC;
     ContactsViewController *_contactsVC;
@@ -29,8 +34,13 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     
     UIBarButtonItem *_addFriendItem;
     UIBarButtonItem *_scanQRCodeItem;
+    //二维码扫描相关变量
+    int num;
+    BOOL upOrdown;
+    NSTimer * timer;
 }
 
+@property (nonatomic, strong) UIImageView * line;//二维码扫描的往复线
 @property (strong, nonatomic)NSDate *lastPlaySoundDate;
 
 @end
@@ -68,16 +78,10 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     [addButton addTarget:_contactsVC action:@selector(addFriendAction) forControlEvents:UIControlEventTouchUpInside];
     _addFriendItem = [[UIBarButtonItem alloc] initWithCustomView:addButton];
     
-    UIButton *scanQRButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
-    [scanQRButton setImage:[UIImage imageNamed:@"QRCode1.png"] forState:UIControlStateNormal];
-    [scanQRButton addTarget:_homeVC action:@selector(setupCamera) forControlEvents:UIControlEventTouchUpInside];
-    _scanQRCodeItem = [[UIBarButtonItem alloc] initWithCustomView:scanQRButton];
-    
     [self setupUnreadMessageCount];
     [self setupUntreatedApplyCount];
     
     self.title = @"有商机";
-    self.navigationItem.leftBarButtonItem = _scanQRCodeItem;
 }
 
 - (void)didReceiveMemoryWarning
@@ -164,13 +168,15 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
     _settingsVC.tabBarItem = [_settingsVC.tabBarItem initWithTitle:@"设置" image:[UIImage imageNamed:@"tabbar_config"] selectedImage:[UIImage imageNamed:@"tabbar_configHL"]];
     _settingsVC.view.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     _settingsVC.tabBarItem.tag = 3;
-    
-    //设置选中和非选中状态的字体
     [self unSelectedTapTabBarItems:_settingsVC.tabBarItem];
     [self selectedTapTabBarItems:_settingsVC.tabBarItem];
     
-    self.viewControllers = @[_homeVC, _chatListVC, _contactsVC, _settingsVC];
+    UIViewController *middlePlaceHolderVC = [[UIViewController alloc] init];
+    
+    self.viewControllers = @[_homeVC, _chatListVC, middlePlaceHolderVC, _contactsVC, _settingsVC];
     [self selectedTapTabBarItems:_homeVC.tabBarItem];
+    
+    [self addCenterButtonWithImage];
 }
 
 -(void)unSelectedTapTabBarItems:(UITabBarItem *)tabBarItem
@@ -186,6 +192,30 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
                                         [UIFont systemFontOfSize:14],
                                         NSFontAttributeName,[UIColor orangeColor],NSForegroundColorAttributeName,
                                         nil] forState:UIControlStateSelected];
+}
+//增加Tabbar中间按钮
+-(void) addCenterButtonWithImage
+{
+    UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
+    UIImage *buttonImage = [UIImage imageNamed:@"camera_button_take.png"];
+    UIImage *highlightImage = [UIImage imageNamed:@"tabBar_cameraButton_ready_matte.png"];
+    button.frame = CGRectMake(0.0, 0.0, buttonImage.size.width, buttonImage.size.height);
+    [button setBackgroundImage:buttonImage forState:UIControlStateNormal];
+    [button setBackgroundImage:highlightImage forState:UIControlStateHighlighted];
+    
+    CGFloat heightDifference = buttonImage.size.height - self.tabBar.frame.size.height;
+    if (heightDifference < 0)
+        button.center = self.tabBar.center;
+    else
+    {
+        CGPoint center = self.tabBar.center;
+        center.y = center.y - heightDifference/2.0;
+        button.center = center;
+    }
+    
+    [button addTarget:self action:@selector(setupCamera) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
 }
 
 #pragma EaseMob delegate
@@ -567,9 +597,9 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
 - (void)didAutoReconnectFinishedWithError:(NSError *)error{
     [self hideHud];
     if (error) {
-        [self showHint:@"重连失败，稍候将继续重连"];
+        [self showHint:@"IM服务器连接失败，稍候将重连，重连成功前无法使用聊天功能"];
     }else{
-        [self showHint:@"重连成功！"];
+        //[self showHint:@"重连成功！"];
     }
 }
 
@@ -582,6 +612,156 @@ static const CGFloat kDefaultPlaySoundInterval = 3.0;
         [self.navigationController popToViewController:self animated:NO];
         [self setSelectedViewController:_chatListVC];
     }
+}
+
+#pragma mark - PassValueDelegate,及二维码扫描相关代码
+-(void)setupCamera{
+    if(IOS7)
+    {
+        QRScanViewController * rt = [[QRScanViewController alloc]init];
+        rt.passValueDelegate = self;
+        [self presentViewController:rt animated:NO completion:^{
+            
+        }];
+        
+    }
+    else
+    {
+        [self scanBtnAction];
+    }
+}
+
+-(void)scanBtnAction
+{
+    num = 0;
+    upOrdown = NO;
+    //初始话ZBar
+    ZBarReaderViewController * reader = [ZBarReaderViewController new];
+    //设置代理
+    reader.readerDelegate = self;
+    //支持界面旋转
+    reader.supportedOrientationsMask = ZBarOrientationMaskAll;
+    reader.showsHelpOnFail = NO;
+    reader.scanCrop = CGRectMake(0.1, 0.2, 0.8, 0.8);//扫描的感应框
+    ZBarImageScanner * scanner = reader.scanner;
+    [scanner setSymbology:ZBAR_I25
+                   config:ZBAR_CFG_ENABLE
+                       to:0];
+    UIView * view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 420)];
+    view.backgroundColor = [UIColor clearColor];
+    reader.cameraOverlayView = view;
+    
+    
+    UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, 280, 40)];
+    label.text = @"请将扫描的二维码至于下面的框内\n谢谢！";
+    label.textColor = [UIColor whiteColor];
+    label.textAlignment = 1;
+    label.lineBreakMode = 0;
+    label.numberOfLines = 2;
+    label.backgroundColor = [UIColor clearColor];
+    [view addSubview:label];
+    
+    UIImageView * image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"pick_bg.png"]];
+    image.frame = CGRectMake(20, 80, 280, 280);
+    [view addSubview:image];
+    
+    
+    _line = [[UIImageView alloc] initWithFrame:CGRectMake(30, 10, 220, 2)];
+    _line.image = [UIImage imageNamed:@"line.png"];
+    [image addSubview:_line];
+    //定时器，设定时间过1.5秒，
+    timer = [NSTimer scheduledTimerWithTimeInterval:.02 target:self selector:@selector(animation1) userInfo:nil repeats:YES];
+    
+    [self presentViewController:reader animated:YES completion:^{
+        
+    }];
+}
+-(void)animation1
+{
+    if (upOrdown == NO) {
+        num ++;
+        _line.frame = CGRectMake(30, 10+2*num, 220, 2);
+        if (2*num == 260) {
+            upOrdown = YES;
+        }
+    }
+    else {
+        num --;
+        _line.frame = CGRectMake(30, 10+2*num, 220, 2);
+        if (num == 0) {
+            upOrdown = NO;
+        }
+    }
+    
+    
+}
+-(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [timer invalidate];
+    _line.frame = CGRectMake(30, 10, 220, 2);
+    num = 0;
+    upOrdown = NO;
+    [picker dismissViewControllerAnimated:YES completion:^{
+        [picker removeFromParentViewController];
+    }];
+}
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    [timer invalidate];
+    _line.frame = CGRectMake(30, 10, 220, 2);
+    num = 0;
+    upOrdown = NO;
+    [picker dismissViewControllerAnimated:YES completion:^{
+        [picker removeFromParentViewController];
+        UIImage * image = [info objectForKey:UIImagePickerControllerOriginalImage];
+        //初始化
+        ZBarReaderController * read = [ZBarReaderController new];
+        //设置代理
+        read.readerDelegate = self;
+        CGImageRef cgImageRef = image.CGImage;
+        ZBarSymbol * symbol = nil;
+        id <NSFastEnumeration> results = [read scanImage:cgImageRef];
+        for (symbol in results)
+        {
+            break;
+        }
+        NSString * result;
+        if ([symbol.data canBeConvertedToEncoding:NSShiftJISStringEncoding])
+            
+        {
+            result = [NSString stringWithCString:[symbol.data cStringUsingEncoding: NSShiftJISStringEncoding] encoding:NSUTF8StringEncoding];
+        }
+        else
+        {
+            result = symbol.data;
+        }
+        
+        
+        NSLog(@"%@",result);
+        
+    }];
+}
+
+-(void)passValue:(NSString *)value{
+    NSString *oid;
+    NSRange rangeGuid = [value rangeOfString:@"GUID="];
+    NSRange rangeOid = [value rangeOfString:@"OBJECTID="];
+    
+    if (rangeOid.length > 0)
+        oid = [value substringFromIndex:NSMaxRange(rangeOid)];
+    else if (rangeGuid.length > 0)//ID不是Guid，则为ObjectId
+        oid = [value substringFromIndex:NSMaxRange(rangeGuid)];
+    else
+        oid = @"";
+    
+    
+    ShowProductInfoViewController* spi = [ShowProductInfoViewController new];
+    if ([oid length] > 0){
+        [spi setProductID:oid];
+    } else {
+        [spi showWarning];
+    }
+    [self presentViewController:spi animated:YES completion:^{}];
 }
 
 @end

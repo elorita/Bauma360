@@ -15,6 +15,10 @@
 #import "MessageModel.h"
 #import "EaseMob.h"
 
+#import "EMConversation+.h"
+#import <AVOSCloud/AVOSCloud.h>
+#import "ShareInstances.h"
+
 @implementation MessageModelManager
 
 + (id)modelWithMessage:(EMMessage *)message
@@ -112,6 +116,16 @@
     }
     
     return model;
+}
+
++ (id)modelWithMessage:(EMMessage *)message withConversation:(EMConversation *)conversation {
+    MessageModel *model = [self modelWithMessage:message];
+    if (model.isSender) {
+        model.headImage = [ShareInstances getCurrentUserHeadPortraitThumbnail];
+    } else {
+        model.headImage = conversation.headPortrait;
+    }
+    return  model;
 }
 
 @end

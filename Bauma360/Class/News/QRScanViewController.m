@@ -8,6 +8,7 @@
 //
 
 #import "QRScanViewController.h"
+#import "CustomColor.h"
 
 @interface QRScanViewController ()
 
@@ -30,7 +31,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor colorWithRed:78.0/255.0 green:188.0/255.0 blue:211.0/255.0 alpha:1];
+    self.view.backgroundColor = [CustomColor lightOrange];
     
 	UIButton * returnButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 16, 44, 44)];
     [returnButton setImage:[UIImage imageNamed:@"return.png"] forState:UIControlStateNormal];
@@ -80,7 +81,7 @@
 {
     
     [self dismissViewControllerAnimated:YES completion:^{
-        [timer invalidate];
+        [self->timer invalidate];
     }];
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -136,8 +137,8 @@
         
         [self dismissViewControllerAnimated:NO completion:^
          {
-             [timer invalidate];
-             NSLog(@"%@",stringValue);
+             [self->timer invalidate];
+             NSLog(@"%@",self->stringValue);
          }];
         [passValueDelegate passValue:stringValue];
     }

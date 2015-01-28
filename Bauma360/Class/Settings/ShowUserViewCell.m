@@ -10,6 +10,7 @@
 #import "LoginViewController.h"
 #import "UIImage+ImageEffects.h"
 #import <AVOSCloud/AVOSCloud.h>
+#import "ShareInstances.h"
 
 static UIImage *headPortraitCache;
 static NSInteger welcomeLabelHeight = 20;
@@ -22,7 +23,7 @@ static NSInteger welcomeLabelHeight = 20;
 
 @implementation ShowUserViewCell {
     UILabel *welcomeLabel;
-    UILabel *welcomeLabel2;
+//    UILabel *welcomeLabel2;
     UIButton *signInButton;
 }
 
@@ -42,35 +43,40 @@ static NSInteger welcomeLabelHeight = 20;
         [self setBackgroundView:bgView];
     }
     
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
+    
     [self refreshSignStatu];
 }
 
 - (void)refreshSignStatu {
+    AVUser *curUser = [AVUser currentUser];
+    
+    if (curUser != nil)
+        [ShareInstances setCurrentUserHeadPortraitWithUserName:curUser.username];
+        
     [self addSubview:self.portraitImageView];
     [self loadPortrait];
     
-    
-    AVUser *curUser = [AVUser currentUser];
     if (welcomeLabel == nil) {
-        welcomeLabel = [[UILabel alloc] initWithFrame:CGRectMake((self.frame.size.width - 160) / 2, self.portraitImageView.frame.origin.y + self.portraitImageView.frame.size.height + 5, 160, welcomeLabelHeight)];
+        welcomeLabel = [[UILabel alloc] initWithFrame:CGRectMake((self.frame.size.width - 160) / 2, self.portraitImageView.frame.origin.y + self.portraitImageView.frame.size.height + 15, 160, welcomeLabelHeight)];
         [self addSubview:welcomeLabel];
     }
     welcomeLabel.textColor = [UIColor whiteColor];
     welcomeLabel.font = [UIFont boldSystemFontOfSize:18];
     welcomeLabel.textAlignment = NSTextAlignmentCenter;
-    welcomeLabel.text = [AVUser currentUser] == nil ? @"Hi 你好" : [NSString stringWithFormat:@"Hi %@", [curUser objectForKey:@"nickname"]];
+    welcomeLabel.text = curUser == nil ? @"Hi 你好 点击登录" : [NSString stringWithFormat:@"Hi %@", [curUser objectForKey:@"nickname"]];
     
-    if (welcomeLabel2 == nil) {
-        welcomeLabel2 = [[UILabel alloc] initWithFrame:CGRectMake((self.frame.size.width - 260) / 2, welcomeLabel.frame.origin.y + welcomeLabel.frame.size.height + 10, 260, welcomeLabelHeight)];
-    }
-    welcomeLabel2.textColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1];
-    welcomeLabel2.font = [UIFont boldSystemFontOfSize:15];
-    welcomeLabel2.textAlignment = NSTextAlignmentCenter;
-    welcomeLabel2.text = @"点击背景 登录建机圈 获取更多商机吧";
-    if (curUser == nil)
-        [self addSubview:welcomeLabel2];
-    else
-        [welcomeLabel2 removeFromSuperview];
+//    if (welcomeLabel2 == nil) {
+//        welcomeLabel2 = [[UILabel alloc] initWithFrame:CGRectMake((self.frame.size.width - 260) / 2, welcomeLabel.frame.origin.y + welcomeLabel.frame.size.height + 10, 260, welcomeLabelHeight)];
+//    }
+//    welcomeLabel2.textColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1];
+//    welcomeLabel2.font = [UIFont boldSystemFontOfSize:15];
+//    welcomeLabel2.textAlignment = NSTextAlignmentCenter;
+//    welcomeLabel2.text = @"点击背景 登录建机圈 获取更多商机吧";
+//    if (curUser == nil)
+//        [self addSubview:welcomeLabel2];
+//    else
+//        [welcomeLabel2 removeFromSuperview];
 }
 
 - (void)loadPortrait {
@@ -78,22 +84,22 @@ static NSInteger welcomeLabelHeight = 20;
     if (curUser != nil) {
         if (headPortraitCache == nil){
             AVFile *imageFile = [curUser objectForKey:@"headPortrait"];
-            [imageFile getThumbnail:YES width:150 height:150 withBlock:^(UIImage * image, NSError *error) {
-                if (!error) {
-                    headPortraitCache = image;
+            if (imageFile != nil) {
+                [imageFile getThumbnail:YES width:150 height:150 withBlock:^(UIImage * image, NSError *error) {
+                    if (!error) {
+                        headPortraitCache = image;
+                    } else {
+                        headPortraitCache = [UIImage imageNamed:@"150"];
+                    }
                     self.portraitImageView.image = headPortraitCache;
-                }
-            }];
+                }];
+            } else {
+                headPortraitCache = [UIImage imageNamed:@"150"];
+                _portraitImageView.image = headPortraitCache;
+            }
         }
-        _portraitImageView.image = headPortraitCache;
     } else {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-            NSURL *portraitUrl = [NSURL URLWithString:@"http://photo.l99.com/bigger/31/1363231021567_5zu910.jpg"];
-            UIImage *protraitImg = [UIImage imageWithData:[NSData dataWithContentsOfURL:portraitUrl]];
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                self.portraitImageView.image = protraitImg;
-            });
-        });
+        _portraitImageView.image = [UIImage imageNamed:@"150"];
     }
 }
 

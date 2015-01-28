@@ -39,9 +39,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _phoneNoTextField.keyboardType = UIKeyboardTypeNumberPad;
+    //_phoneNoTextField.keyboardType = UIKeyboardTypeNumberPad;
     [self setupForDismissKeyboard];
     _phoneNoTextField.delegate = self;
+    
+    UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    [backButton setImage:[UIImage imageNamed:@"return.png"] forState:UIControlStateNormal];
+    [backButton addTarget:self.navigationController action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    [self.navigationItem setLeftBarButtonItem:backItem];
+    
+    self.title = @"登录";
 }
 
 - (void)didReceiveMemoryWarning

@@ -118,18 +118,6 @@
                             self->labelContainerView.frame = newRect4LabelContainer;
                         }
                     }];
-//                    UIImage *image = [UIImage imageWithData:data];
-//                    UIImageView * imageView = [[UIImageView alloc] initWithImage:image];
-//                    imageView.frame = CGRectMake(0, 0, self.frame.size.width, image.size.height * self.frame.size.width / image.size.width);
-//                    
-//                    imageView.contentMode = UIViewContentModeScaleAspectFit;
-//                    imageView.autoresizesSubviews = YES;
-//                    imageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-//                    
-//                    [self addSubview:imageView];
-//                    self.contentSize = CGSizeMake(self.contentSize.width, self.contentSize.height + imageView.frame.size.height + 120);
-//                    CGRect newRect4LabelContainer = CGRectMake(0, self->labelContainerView.frame.origin.y + imageView.frame.size.height, self->labelContainerView.frame.size.width, self->labelContainerView.frame.size.height);
-//                    self->labelContainerView.frame = newRect4LabelContainer;
                 }
                 
                 NSString *categoryName;

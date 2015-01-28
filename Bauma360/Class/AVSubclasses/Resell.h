@@ -15,7 +15,7 @@
 @property(nonatomic,copy) NSDate *expiryDate;
 @property(nonatomic,copy) NSString *summary;
 @property(nonatomic,copy) NSString *body;
-@property(nonatomic) NSInteger *price;
+@property(nonatomic) NSInteger price;
 @property(nonatomic,retain) AVRelation *images;
 @property(nonatomic) BOOL certified;
 @property(nonatomic,retain) AVGeoPoint *location;

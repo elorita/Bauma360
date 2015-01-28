@@ -43,10 +43,12 @@
         float vButtonWidth = [[lDic objectForKey:TITLEWIDTH] floatValue];
         UIButton *vButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [vButton setBackgroundImage:[UIImage imageNamed:vNormalImageStr] forState:UIControlStateNormal];
-        [vButton setBackgroundImage:[UIImage imageNamed:vHeligtImageStr] forState:UIControlStateSelected];
+        [vButton setBackgroundImage:[UIImage imageNamed:vNormalImageStr] forState:UIControlStateSelected];
+        [vButton setBackgroundImage:[UIImage imageNamed:vHeligtImageStr] forState:UIControlStateHighlighted];
         [vButton setTitle:vTitleStr forState:UIControlStateNormal];
-        [vButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [vButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateHighlighted];
+        [vButton setTitleColor:[UIColor colorWithRed:88.0/255.0 green:88.0/255.0 blue:88.0/255.0 alpha:1] forState:UIControlStateNormal];
+        [vButton setTitleColor:[UIColor orangeColor] forState:UIControlStateSelected];
+        [vButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
         [vButton setTag:i];
         [vButton addTarget:self action:@selector(menuButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         [vButton setFrame:CGRectMake(menuWidth, 0, vButtonWidth, self.frame.size.height)];
@@ -73,6 +75,7 @@
 -(void)changeButtonsToNormalState{
     for (UIButton *vButton in mButtonArray) {
         vButton.selected = NO;
+        [vButton.titleLabel setFont:[UIFont systemFontOfSize:14]];
     }
 }
 
@@ -87,8 +90,11 @@
     UIButton *vButton = [mButtonArray objectAtIndex:aIndex];
     [self changeButtonsToNormalState];
     vButton.selected = YES;
+    [vButton.titleLabel setFont:[UIFont systemFontOfSize:18]];
     [self moveScrolViewWithIndex:aIndex];
 }
+
+#pragma mark 将所有button预置为非选中状态
 
 #pragma mark 移动button到可视的区域
 -(void)moveScrolViewWithIndex:(NSInteger)aIndex{

@@ -7,13 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AVOSCloud/AVOSCloud.h>
 
 @interface SGFocusImageItem : NSObject
 
 @property (nonatomic, retain)  NSString     *title;
-@property (nonatomic, retain)  NSString      *image;
+@property (nonatomic, retain)  AVFile      *imageFile;
 @property (nonatomic, assign)  NSInteger     tag;
 
-- (id)initWithTitle:(NSString *)title image:(NSString *)image tag:(NSInteger)tag;
+- (id)initWithTitle:(NSString *)title image:(AVFile *)imageFile tag:(NSInteger)tag;
 - (id)initWithDict:(NSDictionary *)dict tag:(NSInteger)tag;
 @end

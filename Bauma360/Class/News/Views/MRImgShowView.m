@@ -179,7 +179,7 @@
     
     // 判断数据类型 根据数据类型抉择使用情况
     // 如果需要使用URL，请导入延展
-    Class urlCls = NSClassFromString(@"NSURL");
+    //Class urlCls = NSClassFromString(@"NSURL");
     
     if (_imgSource.count) {
         [self setAllImgVContentFromImage:[self imgListFromIndex:_curIndex]];
