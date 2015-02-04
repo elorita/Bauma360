@@ -10,7 +10,7 @@
   * from EaseMob Technologies.
   */
 
-#import <SDWebImage/UIImageView+WebCache.h>
+//#import <SDWebImage/UIImageView+WebCache.h>
 #import "EMChatImageBubbleView.h"
 
 NSString *const kRouterEventImageBubbleTapEventName = @"kRouterEventImageBubbleTapEventName";
